@@ -5,8 +5,8 @@ export default function App() {
   const tree = [
     {
       type: "div",
-      styles: ["bg-black h-24 w-screen"],
-      id: 0,
+      styles: ["bg-black w-screen h-screen"],
+      id: 1,
       childrens: [],
     },
   ];
@@ -15,7 +15,7 @@ export default function App() {
   const [styles, setStyle] = useState("");
   const [content, setContent] = useState("");
   const [page, setPage] = useState(tree);
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(1);
 
   function handleAdd(type, styles, content = "") {
     let block = createBlock(type, styles.split(" "), content);
@@ -23,21 +23,47 @@ export default function App() {
     setPage(newTree);
   }
 
-  function addChidlren(foundId, children) {
-    let tree = JSON.parse(JSON.stringify(page));
-    function addToChildrenById() {
-      for (const node of tree) {
-        if (node.id === foundId) {
+  function addChidlren(idToFound, children) {
+    let updatedTree = JSON.parse(JSON.stringify(page));
+
+    function addToChildrenById(nodes) {
+      for (const node of nodes) {
+        if (node.id === idToFound) {
           node.childrens.push(children);
           return;
         }
-        if (node.childrens.length > 0) {
+        if (node.childrens?.length > 0) {
           addToChildrenById(node.childrens);
         }
       }
     }
-    addToChildrenById();
-    setPage(() => tree);
+
+    addToChildrenById(updatedTree);
+    setPage(updatedTree);
+  }
+
+  function deleteChildren(idToFound) {
+    let updatedTree = JSON.parse(JSON.stringify(page));
+  
+    function deleteChildrenById(nodes, parentNode = null) {
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        if (node.id === idToFound) {
+          if (parentNode) {
+            parentNode.childrens.splice(i, 1);
+          } else {
+            updatedTree = updatedTree.filter(n => n.id !== idToFound);
+          }
+          return;
+        }
+        if (node.childrens?.length > 0) {
+          deleteChildrenById(node.childrens, node);
+        }
+      }
+    }
+  
+    deleteChildrenById(updatedTree);
+    setPage(updatedTree);
   }
 
   function createBlock(type, styles, content) {
@@ -65,7 +91,8 @@ export default function App() {
         if (node.childrens) {
           return (
             <div
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setSelected(node.id);
               }}
               id={node.id}
@@ -82,7 +109,8 @@ export default function App() {
         } else {
           return (
             <div
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setSelected(node.id);
               }}
               id={node.id}
@@ -95,7 +123,8 @@ export default function App() {
       if (node.type === "h1") {
         return (
           <h1
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setSelected(node.id);
             }}
             id={node.id}
@@ -115,7 +144,11 @@ export default function App() {
   return (
     <div>
       <div className="">{parseTree(page)}</div>
-
+      <div className="fixed z-50 right-4 top-4 ">
+        <h1 className="text-blue-500 text-3xl">Debug mode</h1>
+        <br />
+        <h1 className="text-blue-500 text-3xl">selected id:{selected}</h1>
+      </div>
       <div className="fixed right-8 bottom-8">
         <div className="border border-black rounded-xl p-8 z-50 bg-white">
           {selected === 0 ? (
@@ -200,6 +233,12 @@ export default function App() {
               </button>
             </form>
           )}
+          <button
+            className="border p-6 bg-red-500 border-black  rounded-xl mt-4 "
+            onClick={() => deleteChildren(selected)}
+          >
+            Delete node
+          </button>
         </div>
       </div>
     </div>
