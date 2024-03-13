@@ -616,6 +616,10 @@ video {
   height: 7rem;
 }
 
+.h-24 {
+  height: 6rem;
+}
+
 .w-1\/2 {
   width: 50%;
 }
@@ -630,6 +634,10 @@ video {
 
 .w-28 {
   width: 7rem;
+}
+
+.w-screen {
+  width: 100vw;
 }
 
 .flex-col {
