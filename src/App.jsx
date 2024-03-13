@@ -6,15 +6,18 @@ export default function App() {
     {
       type: "div",
       styles: ["bg-black"],
+      id: 361,
       childrens: [
         {
           type: "div",
           styles: ["bg-red-500", "w-1/2"],
+          id: 400,
           childrens: [
             {
               type: "h1",
               styles: ["text-blue-500", "text-xl"],
               content: "Hello world!",
+              id: 121,
             },
           ],
         },
@@ -23,11 +26,13 @@ export default function App() {
     {
       type: "div",
       styles: ["bg-green-500"],
+      id: 11,
       childrens: [
         {
           type: "h1",
           styles: ["text-black", "text-3xl"],
           content: "Goodbye world!",
+          id: 154,
         },
       ],
     },
@@ -37,7 +42,9 @@ export default function App() {
   const [styles, setStyle] = useState("");
   const [content, setContent] = useState("");
   const [page, setPage] = useState(tree);
+  const [selected, setSelected] = useState(0);
 
+  
   function handleAdd(type, styles, content = "") {
     let block = createBlock(type, styles.split(" "), content);
     let newTree = [...page, block];
@@ -64,21 +71,44 @@ export default function App() {
   }
 
   function parseTree(tree) {
-    return tree.map(function (node, index) {
+    return tree.map(function (node) {
       if (node.type === "div") {
         if (node.childrens) {
           return (
-            <div key={index} className={node.styles.join(" ")}>
+            <div
+              onClick={() => {
+                setSelected(node.id);
+              }}
+              id={node.id}
+              key={node.id}
+              className={`${node.styles.join(" ")} ${selected === node.id ? 'border border-blue-500 border-dashed' : ''}`}
+            >
               {parseTree(node.childrens)}
             </div>
           );
         } else {
-          return <div key={index} className={node.styles.join(" ")}></div>;
+          return (
+            <div
+              onClick={() => {
+                setSelected(node.id);
+              }}
+              id={node.id}
+              key={node.id}
+              className={node.styles.join(" ")}
+            ></div>
+          );
         }
       }
       if (node.type === "h1") {
         return (
-          <h1 key={index} className={node.styles.join(" ")}>
+          <h1
+            onClick={() => {
+              setSelected(node.id);
+            }}
+            id={node.id}
+            key={node.id}
+            className={`${node.styles.join(" ")} ${selected === node.id ? 'border border-blue-500 border-dashed' : ''}`}
+          >
             {node.content}
           </h1>
         );
@@ -100,7 +130,7 @@ export default function App() {
             }}
             className="flex flex-col gap-2"
           >
-            <h1 className="text-center">Добавить элемент</h1>
+            <h1 className="text-center ">Добавить элемент</h1>
             <label>Тип элемента</label>
             <select
               value={type}
