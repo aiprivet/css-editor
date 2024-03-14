@@ -5,7 +5,7 @@ export default function App() {
   const tree = [
     {
       type: "div",
-      styles: ["bg-black w-screen h-screen"],
+      styles: ["bg-black", "w-screen", "h-screen"],
       id: 1,
       childrens: [],
       parent: null,
@@ -18,7 +18,9 @@ export default function App() {
   const [page, setPage] = useState(tree);
   const [selected, setSelected] = useState(1);
   const [currentStyle, setCurrentStyle] = useState([
-    "bg-black w-screen h-screen",
+    "bg-black",
+    "w-screen",
+    "h-screen",
   ]);
 
   function addChidlren(idToFound, children) {
@@ -57,20 +59,20 @@ export default function App() {
   }
 
   function findNode(idToFound) {
-    let updatedTree = JSON.parse(JSON.stringify(page)); 
-    let foundStyles = []; 
+    let updatedTree = JSON.parse(JSON.stringify(page));
+    let foundStyles = [];
     function findNodeById(nodes) {
-        for (const node of nodes) {
-            if (node.id === idToFound) {
-                foundStyles  = node.styles 
-            }
-            if (node.childrens?.length > 0) {
-                findNodeById(node.childrens);
-            }
+      for (const node of nodes) {
+        if (node.id === idToFound) {
+          foundStyles = node.styles;
         }
+        if (node.childrens?.length > 0) {
+          findNodeById(node.childrens);
+        }
+      }
     }
-    findNodeById(updatedTree)
-    setCurrentStyle(foundStyles); 
+    findNodeById(updatedTree);
+    setCurrentStyle(foundStyles);
   }
 
   function deleteChildren(idToFound) {
@@ -119,6 +121,14 @@ export default function App() {
     }
   }
 
+  function handleChangeStyles(index, event) {
+    const newValue = event.target.value;
+    setCurrentStyle((prevStyles) => {
+      const newStyles = [...prevStyles];
+      newStyles[index] = newValue;
+      return newStyles;
+    });
+  }
   function parseTree(tree) {
     return tree.map(function (node) {
       if (node.type === "div") {
@@ -199,7 +209,7 @@ export default function App() {
             }}
             className="flex flex-col gap-2"
           >
-            <h1 className="text-center ">Добавить узел</h1>
+            <h1 className="text-center text-xl font-bold">Добавить узел</h1>
             <label>Тип элемента</label>
             <select
               value={type}
@@ -225,9 +235,9 @@ export default function App() {
             />
             <button
               type="submit"
-              className="border border-black  rounded-xl mt-4 "
+              className="border border-black bg-blue-500 rounded-xl mt-4 "
             >
-              Add
+              Добавить
             </button>
             <button
               className={`border border-black  rounded-xl mt-4 ${
@@ -236,7 +246,7 @@ export default function App() {
               disabled={selected === 1 ? true : false}
               onClick={() => deleteChildren(selected)}
             >
-              Delete node
+              Удалить узел
             </button>
           </form>
         </div>
@@ -247,18 +257,30 @@ export default function App() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              addChidlren(
-                selected,
-                createBlock(type, styles.split(" "), content, selected)
-              );
+              editNode(selected, currentStyle);
             }}
             className="flex flex-col gap-2"
           >
-            <ul>
-              {currentStyle.map((style) => (
-                <li key={style}>{style}</li>
+            <h1 className="text-center text-xl font-bold">
+              Редактировать узел
+            </h1>
+            <div className="flex flex-col gap-2">
+              {currentStyle.map((style, index) => (
+                <input
+                  className="border border-black rounded-lg p-2"
+                  type="text"
+                  value={style}
+                  key={index}
+                  onChange={(event) => handleChangeStyles(index, event)}
+                />
               ))}
-            </ul>
+              <button
+                type="submit"
+                className="border border-black bg-green-400 rounded-xl mt-4 "
+              >
+                Cохранить
+              </button>
+            </div>
           </form>
         </div>
       </div>
