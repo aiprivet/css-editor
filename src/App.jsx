@@ -8,6 +8,7 @@ export default function App() {
       styles: ["bg-black w-screen h-screen"],
       id: 1,
       childrens: [],
+      parent: null,
     },
   ];
 
@@ -16,20 +17,17 @@ export default function App() {
   const [content, setContent] = useState("");
   const [page, setPage] = useState(tree);
   const [selected, setSelected] = useState(1);
-
-  function handleAdd(type, styles, content = "") {
-    let block = createBlock(type, styles.split(" "), content);
-    let newTree = [...page, block];
-    setPage(newTree);
-  }
+  const [currentStyle, setCurrentStyle] = useState([
+    "bg-black w-screen h-screen",
+  ]);
 
   function addChidlren(idToFound, children) {
     let updatedTree = JSON.parse(JSON.stringify(page));
-
     function addToChildrenById(nodes) {
       for (const node of nodes) {
         if (node.id === idToFound) {
           node.childrens.push(children);
+          setSelected(children.id);
           return;
         }
         if (node.childrens?.length > 0) {
@@ -37,14 +35,47 @@ export default function App() {
         }
       }
     }
-
     addToChildrenById(updatedTree);
     setPage(updatedTree);
   }
 
-  function deleteChildren(idToFound) {
+  function editNode(idToFound, newStyles) {
     let updatedTree = JSON.parse(JSON.stringify(page));
-  
+    function editNodeById(nodes) {
+      for (const node of nodes) {
+        if (node.id === idToFound) {
+          node.styles = newStyles;
+          return;
+        }
+        if (node.childrens?.length > 0) {
+          editNodeById(node.childrens);
+        }
+      }
+    }
+    editNodeById(updatedTree);
+    setPage(updatedTree);
+  }
+
+  function findNode(idToFound) {
+    let updatedTree = JSON.parse(JSON.stringify(page)); 
+    let foundStyles = []; 
+    function findNodeById(nodes) {
+        for (const node of nodes) {
+            if (node.id === idToFound) {
+                foundStyles  = node.styles 
+            }
+            if (node.childrens?.length > 0) {
+                findNodeById(node.childrens);
+            }
+        }
+    }
+    findNodeById(updatedTree)
+    setCurrentStyle(foundStyles); 
+  }
+
+  function deleteChildren(idToFound) {
+    if (selected === 1) return;
+    let updatedTree = JSON.parse(JSON.stringify(page));
     function deleteChildrenById(nodes, parentNode = null) {
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
@@ -52,7 +83,7 @@ export default function App() {
           if (parentNode) {
             parentNode.childrens.splice(i, 1);
           } else {
-            updatedTree = updatedTree.filter(n => n.id !== idToFound);
+            updatedTree = updatedTree.filter((n) => n.id !== idToFound);
           }
           return;
         }
@@ -61,18 +92,20 @@ export default function App() {
         }
       }
     }
-  
+
     deleteChildrenById(updatedTree);
+    setSelected(1);
     setPage(updatedTree);
   }
 
-  function createBlock(type, styles, content) {
+  function createBlock(type, styles, content, parentId) {
     if (type === "div") {
       return {
         type,
         styles,
         id: uuidv4(),
         childrens: [],
+        parentId,
       };
     }
     if (type === "h1") {
@@ -81,6 +114,7 @@ export default function App() {
         styles,
         id: uuidv4(),
         content,
+        parentId,
       };
     }
   }
@@ -94,6 +128,7 @@ export default function App() {
               onClick={(e) => {
                 e.stopPropagation();
                 setSelected(node.id);
+                findNode(node.id);
               }}
               id={node.id}
               key={node.id}
@@ -112,6 +147,7 @@ export default function App() {
               onClick={(e) => {
                 e.stopPropagation();
                 setSelected(node.id);
+                findNode(node.id);
               }}
               id={node.id}
               key={node.id}
@@ -126,6 +162,7 @@ export default function App() {
             onClick={(e) => {
               e.stopPropagation();
               setSelected(node.id);
+              findNode(node.id);
             }}
             id={node.id}
             key={node.id}
@@ -142,105 +179,89 @@ export default function App() {
   }
 
   return (
-    <div>
+    <>
       <div className="">{parseTree(page)}</div>
       <div className="fixed z-50 right-4 top-4 ">
         <h1 className="text-blue-500 text-3xl">Debug mode</h1>
         <br />
         <h1 className="text-blue-500 text-3xl">selected id:{selected}</h1>
       </div>
+
       <div className="fixed right-8 bottom-8">
         <div className="border border-black rounded-xl p-8 z-50 bg-white">
-          {selected === 0 ? (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleAdd(type, styles, content);
-              }}
-              className="flex flex-col gap-2"
-            >
-              <h1 className="text-center ">Добавить элемент</h1>
-              <label>Тип элемента</label>
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                className="border border-black rounded-lg "
-              >
-                <option value={"div"}>DIV</option>
-                <option value={"h1"}>H1</option>
-              </select>
-              <label>Стили</label>
-              <input
-                onChange={(e) => setStyle(e.target.value)}
-                value={styles}
-                type="text"
-                className="border border-black rounded-lg"
-              />
-              <label>Контент?</label>
-              <input
-                onChange={(e) => setContent(e.target.value)}
-                value={content}
-                type="text"
-                className="border border-black rounded-lg"
-              />
-              <button
-                type="submit"
-                className="border border-black  rounded-xl mt-4 "
-              >
-                Add
-              </button>
-            </form>
-          ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                addChidlren(
-                  selected,
-                  createBlock(type, styles.split(" "), content)
-                );
-              }}
-              className="flex flex-col gap-2"
-            >
-              <h1 className="text-center ">Добавить потомка</h1>
-              <label>Тип элемента</label>
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                className="border border-black rounded-lg "
-              >
-                <option value={"div"}>DIV</option>
-                <option value={"h1"}>H1</option>
-              </select>
-              <label>Стили</label>
-              <input
-                onChange={(e) => setStyle(e.target.value)}
-                value={styles}
-                type="text"
-                className="border border-black rounded-lg"
-              />
-              <label>Контент?</label>
-              <input
-                onChange={(e) => setContent(e.target.value)}
-                value={content}
-                type="text"
-                className="border border-black rounded-lg"
-              />
-              <button
-                type="submit"
-                className="border border-black  rounded-xl mt-4 "
-              >
-                Add
-              </button>
-            </form>
-          )}
-          <button
-            className="border p-6 bg-red-500 border-black  rounded-xl mt-4 "
-            onClick={() => deleteChildren(selected)}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              addChidlren(
+                selected,
+                createBlock(type, styles.split(" "), content, selected)
+              );
+            }}
+            className="flex flex-col gap-2"
           >
-            Delete node
-          </button>
+            <h1 className="text-center ">Добавить узел</h1>
+            <label>Тип элемента</label>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              className="border border-black rounded-lg "
+            >
+              <option value={"div"}>DIV</option>
+              <option value={"h1"}>H1</option>
+            </select>
+            <label>Стили</label>
+            <input
+              onChange={(e) => setStyle(e.target.value)}
+              value={styles}
+              type="text"
+              className="border border-black rounded-lg"
+            />
+            <label>Контент?</label>
+            <input
+              onChange={(e) => setContent(e.target.value)}
+              value={content}
+              type="text"
+              className="border border-black rounded-lg"
+            />
+            <button
+              type="submit"
+              className="border border-black  rounded-xl mt-4 "
+            >
+              Add
+            </button>
+            <button
+              className={`border border-black  rounded-xl mt-4 ${
+                selected === 1 ? "bg-neutral-500" : "bg-red-500"
+              }`}
+              disabled={selected === 1 ? true : false}
+              onClick={() => deleteChildren(selected)}
+            >
+              Delete node
+            </button>
+          </form>
         </div>
       </div>
-    </div>
+
+      <div style={{ left: "32px" }} className="fixed bottom-8 ">
+        <div className="border border-black rounded-xl p-8 z-50 bg-white">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              addChidlren(
+                selected,
+                createBlock(type, styles.split(" "), content, selected)
+              );
+            }}
+            className="flex flex-col gap-2"
+          >
+            <ul>
+              {currentStyle.map((style) => (
+                <li key={style}>{style}</li>
+              ))}
+            </ul>
+          </form>
+        </div>
+      </div>
+    </>
   );
 }
