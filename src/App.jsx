@@ -22,6 +22,7 @@ export default function App() {
     "w-screen",
     "h-screen",
   ]);
+  const [currentText, setCurrentText] = useState(null);
 
   function addChidlren(idToFound, children) {
     let updatedTree = JSON.parse(JSON.stringify(page));
@@ -41,12 +42,15 @@ export default function App() {
     setPage(updatedTree);
   }
 
-  function editNode(idToFound, newStyles) {
+  function editNode(idToFound, newStyles, newText = '') {
     let updatedTree = JSON.parse(JSON.stringify(page));
     function editNodeById(nodes) {
       for (const node of nodes) {
         if (node.id === idToFound) {
           node.styles = newStyles;
+          if(node.content !== null){
+            node.content = newText
+          }
           return;
         }
         if (node.childrens?.length > 0) {
@@ -61,10 +65,14 @@ export default function App() {
   function findNode(idToFound) {
     let updatedTree = JSON.parse(JSON.stringify(page));
     let foundStyles = [];
+    let foundText = "";
     function findNodeById(nodes) {
       for (const node of nodes) {
         if (node.id === idToFound) {
           foundStyles = node.styles;
+          if (node.type === "h1") {
+            foundText = node.content;
+          }
         }
         if (node.childrens?.length > 0) {
           findNodeById(node.childrens);
@@ -72,6 +80,8 @@ export default function App() {
       }
     }
     findNodeById(updatedTree);
+    if (foundText !== "") setCurrentText(foundText);
+
     setCurrentStyle(foundStyles);
   }
 
@@ -257,13 +267,14 @@ export default function App() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              editNode(selected, currentStyle);
+              editNode(selected, currentStyle,currentText);
             }}
             className="flex flex-col gap-2"
           >
-            <h1 className="text-center text-xl font-bold">
+            <h2 className="text-center text-xl font-bold">
               Редактировать узел
-            </h1>
+            </h2>
+            <p className="text-center font-bold">Стили:</p>
             <div className="flex flex-col gap-2">
               {currentStyle.map((style, index) => (
                 <input
@@ -274,6 +285,20 @@ export default function App() {
                   onChange={(event) => handleChangeStyles(index, event)}
                 />
               ))}
+
+              {
+                currentText !== null 
+                ?
+                <>
+                <h1>Контент</h1>
+                <input 
+                className="border border-black rounded-lg p-2"
+
+                value={currentText} onChange={(e)=>setCurrentText(e.target.value)}/>
+                </>
+                :
+                ''
+              }
               <button
                 type="submit"
                 className="border border-black bg-green-400 rounded-xl mt-4 "
