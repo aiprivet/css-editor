@@ -105,7 +105,7 @@ export const useSelectedNodeStore = create(function (set) {
   return {
     selectedNode: initialNode,
     updateSelectedNode(newSelectedNode) {
-      return set({ selectedNode: newSelectedNode });
+      set({ selectedNode: newSelectedNode });
     },
   };
 });

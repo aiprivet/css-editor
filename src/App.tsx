@@ -56,9 +56,14 @@ export default function App() {
 
   // curent block
 
+  const selectedNode = useSelectedNodeStore(function (state) {
+    return state.selectedNode;
+  });
 
+  const updateSelectedNode = useSelectedNodeStore(function (state) {
+    return state.updateSelectedNode;
+  });
 
-  
   const [selected, setSelected] = useState("1");
 
   const [currentStyle, setCurrentStyle] = useState([
@@ -67,7 +72,6 @@ export default function App() {
     "h-screen",
   ]);
   const [currentText, setCurrentText] = useState(null);
-  
 
   // curent block
   function addChidlren(idToFound, children) {
@@ -76,7 +80,7 @@ export default function App() {
       for (const node of nodes) {
         if (node.id === idToFound) {
           node.childrens.push(children);
-          setSelected(children.id);
+          updateSelectedNode(children);
           return;
         }
         if (node.childrens?.length > 0) {
@@ -151,7 +155,8 @@ export default function App() {
       }
     }
     deleteChildrenById(updatedTree);
-    setSelected("1");
+    const initNode = updatedTree[0];
+    updateSelectedNode(initNode);
     updatePage(updatedTree);
   }
 
@@ -193,13 +198,13 @@ export default function App() {
             <div
               onClick={(e) => {
                 e.stopPropagation();
-                setSelected(node.id);
+                updateSelectedNode(node);
                 findNode(node.id);
               }}
               id={node.id}
               key={node.id}
               className={`${node.styles.join(" ")} ${
-                selected === node.id
+                selectedNode.id === node.id
                   ? "border border-sky-300 border-dashed"
                   : ""
               }`}
@@ -212,7 +217,7 @@ export default function App() {
             <div
               onClick={(e) => {
                 e.stopPropagation();
-                setSelected(node.id);
+                updateSelectedNode(node);
                 findNode(node.id);
               }}
               id={node.id}
@@ -227,13 +232,15 @@ export default function App() {
           <h1
             onClick={(e) => {
               e.stopPropagation();
-              setSelected(node.id);
+              updateSelectedNode(node);
               findNode(node.id);
             }}
             id={node.id}
             key={node.id}
             className={`${node.styles.join(" ")} ${
-              selected === node.id ? "border border-sky-300 border-dashed" : ""
+              selectedNode.id === node.id
+                ? "border border-sky-300 border-dashed"
+                : ""
             }`}
           >
             {node.textContent}
@@ -259,12 +266,12 @@ export default function App() {
             onSubmit={(e) => {
               e.preventDefault();
               addChidlren(
-                selected,
+                selectedNode.id,
                 createNode(
                   nodeType,
                   nodeStyle.split(" "),
                   textContent,
-                  selected
+                  selectedNode.id
                 )
               );
             }}
