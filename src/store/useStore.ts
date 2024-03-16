@@ -40,10 +40,11 @@ export const useCreateNodeStore = create(function (set) {
   return {
     node: {
       nodeType: "div",
-      styles: [],
+      styles: [" "],
       id: "",
       parentId: "",
       childrens: [],
+      textContent: "",
     },
 
     createNodeType(nodeType) {
@@ -55,6 +56,12 @@ export const useCreateNodeStore = create(function (set) {
     createNodeStyles(styles) {
       set(function (state) {
         return { node: { ...state.node, styles } };
+      });
+    },
+
+    createTextContent(textContent) {
+      set(function (state) {
+        return { node: { ...state.node, textContent } };
       });
     },
 
@@ -84,11 +91,6 @@ export const useCreateNodeStore = create(function (set) {
     createInputType(inputType) {
       set(function (state) {
         return { node: { ...state.node, inputType } };
-      });
-    },
-    createTextContent(textContent) {
-      set(function (state) {
-        return { node: { ...state.node, textContent } };
       });
     },
     createAHref(aHref) {

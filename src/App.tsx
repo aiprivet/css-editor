@@ -25,6 +25,7 @@ export default function App() {
   const page = useCreatePageStore(function (state) {
     return state.page;
   });
+
   const updatePage = useCreatePageStore(function (state) {
     return state.updatePage;
   });
@@ -45,7 +46,20 @@ export default function App() {
     return state.createNodeStyles;
   });
 
-  const [content, setContent] = useState("");
+  const textContent = useCreateNodeStore(function (state) {
+    return state.node.textContent;
+  });
+
+  const createTextContent = useCreateNodeStore(function (state) {
+    return state.createTextContent;
+  });
+
+  // curent block
+
+
+
+  
+  const [selected, setSelected] = useState("1");
 
   const [currentStyle, setCurrentStyle] = useState([
     "bg-black",
@@ -53,9 +67,9 @@ export default function App() {
     "h-screen",
   ]);
   const [currentText, setCurrentText] = useState(null);
+  
 
-  const [selected, setSelected] = useState("1");
-
+  // curent block
   function addChidlren(idToFound, children) {
     let updatedTree = JSON.parse(JSON.stringify(page));
     function addToChildrenById(nodes) {
@@ -80,8 +94,8 @@ export default function App() {
       for (const node of nodes) {
         if (node.id === idToFound) {
           node.styles = newStyles;
-          if (node.content !== null) {
-            node.content = newText;
+          if (node.textContent !== null) {
+            node.textContent = newText;
           }
           return;
         }
@@ -103,7 +117,7 @@ export default function App() {
         if (node.id === idToFound) {
           foundStyles = node.styles;
           if (node.type === "h1") {
-            foundText = node.content;
+            foundText = node.textContent;
           }
         }
         if (node.childrens?.length > 0) {
@@ -142,7 +156,6 @@ export default function App() {
   }
 
   function createNode(nodeType, styles, textContent, parentId) {
-    console.log(nodeType, styles, textContent, parentId);
     if (nodeType === "div") {
       return {
         nodeType,
@@ -247,7 +260,12 @@ export default function App() {
               e.preventDefault();
               addChidlren(
                 selected,
-                createNode(nodeType, nodeStyle.split(" "), content, selected)
+                createNode(
+                  nodeType,
+                  nodeStyle.split(" "),
+                  textContent,
+                  selected
+                )
               );
             }}
             className="flex flex-col gap-2"
@@ -271,8 +289,8 @@ export default function App() {
             />
             <label>Контент?</label>
             <input
-              onChange={(e) => setContent(e.target.value)}
-              value={content}
+              onChange={(e) => createTextContent(e.target.value)}
+              value={textContent}
               type="text"
               className="border border-black rounded-lg"
             />
