@@ -1,22 +1,36 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useCreatePageStore } from "./store/useStore";
+
+interface Node {
+  type: string;
+  styles?: string[];
+  id: string;
+  parentId: string | null;
+  childrens?: Node[];
+  imgSrc?: string;
+  inputPlaceholder?: string;
+  inputType?: string;
+  textContent?: string;
+  aHref?: string;
+}
+
+type NodeTree = Node[];
 
 export default function App() {
-  const tree = [
-    {
-      type: "div",
-      styles: ["bg-black", "w-screen", "h-screen"],
-      id: 1,
-      childrens: [],
-      parent: null,
-    },
-  ];
+  const page = useCreatePageStore(function (state) {
+    return state.page;
+  });
+  const updatePage = useCreatePageStore(function (state) {
+    return state.updatePage;
+  });
+
 
   const [type, setType] = useState("div");
   const [styles, setStyle] = useState("");
   const [content, setContent] = useState("");
-  const [page, setPage] = useState(tree);
   const [selected, setSelected] = useState(1);
+  
   const [currentStyle, setCurrentStyle] = useState([
     "bg-black",
     "w-screen",
@@ -39,17 +53,17 @@ export default function App() {
       }
     }
     addToChildrenById(updatedTree);
-    setPage(updatedTree);
+    updatePage(updatedTree);
   }
 
-  function editNode(idToFound, newStyles, newText = '') {
+  function editNode(idToFound, newStyles, newText = "") {
     let updatedTree = JSON.parse(JSON.stringify(page));
     function editNodeById(nodes) {
       for (const node of nodes) {
         if (node.id === idToFound) {
           node.styles = newStyles;
-          if(node.content !== null){
-            node.content = newText
+          if (node.content !== null) {
+            node.content = newText;
           }
           return;
         }
@@ -59,7 +73,7 @@ export default function App() {
       }
     }
     editNodeById(updatedTree);
-    setPage(updatedTree);
+    updatePage(updatedTree);
   }
 
   function findNode(idToFound) {
@@ -107,10 +121,10 @@ export default function App() {
 
     deleteChildrenById(updatedTree);
     setSelected(1);
-    setPage(updatedTree);
+    updatePage(updatedTree);
   }
 
-  function createBlock(type, styles, content, parentId) {
+  function createNode(type, styles, textContent, parentId) {
     if (type === "div") {
       return {
         type,
@@ -125,7 +139,7 @@ export default function App() {
         type,
         styles,
         id: uuidv4(),
-        content,
+        textContent,
         parentId,
       };
     }
@@ -139,6 +153,7 @@ export default function App() {
       return newStyles;
     });
   }
+
   function parseTree(tree) {
     return tree.map(function (node) {
       if (node.type === "div") {
@@ -190,7 +205,7 @@ export default function App() {
               selected === node.id ? "border border-blue-500 border-dashed" : ""
             }`}
           >
-            {node.content}
+            {node.textContent}
           </h1>
         );
       }
@@ -214,7 +229,7 @@ export default function App() {
               e.preventDefault();
               addChidlren(
                 selected,
-                createBlock(type, styles.split(" "), content, selected)
+                createNode(type, styles.split(" "), content, selected)
               );
             }}
             className="flex flex-col gap-2"
@@ -261,20 +276,21 @@ export default function App() {
           </form>
         </div>
       </div>
-
-      <div style={{ left: "32px" }} className="fixed bottom-8 ">
+      <div className="fixed bottom-8 left-8">
         <div className="border border-black rounded-xl p-8 z-50 bg-white">
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              editNode(selected, currentStyle,currentText);
+              editNode(selected, currentStyle, currentText);
             }}
             className="flex flex-col gap-2"
           >
             <h2 className="text-center text-xl font-bold">
               Редактировать узел
             </h2>
+
             <p className="text-center font-bold">Стили:</p>
+
             <div className="flex flex-col gap-2">
               {currentStyle.map((style, index) => (
                 <input
@@ -286,19 +302,6 @@ export default function App() {
                 />
               ))}
 
-              {
-                currentText !== null 
-                ?
-                <>
-                <h1>Контент</h1>
-                <input 
-                className="border border-black rounded-lg p-2"
-
-                value={currentText} onChange={(e)=>setCurrentText(e.target.value)}/>
-                </>
-                :
-                ''
-              }
               <button
                 type="submit"
                 className="border border-black bg-green-400 rounded-xl mt-4 "
