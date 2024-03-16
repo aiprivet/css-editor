@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   useCreatePageStore,
@@ -54,8 +53,6 @@ export default function App() {
     return state.createTextContent;
   });
 
-  // curent block
-
   const selectedNode = useSelectedNodeStore(function (state) {
     return state.selectedNode;
   });
@@ -64,16 +61,10 @@ export default function App() {
     return state.updateSelectedNode;
   });
 
-  const [selected, setSelected] = useState("1");
+  const updateSelectedNodeStyles = useSelectedNodeStore(function (state) {
+    return state.updateSelectedNodeStyles;
+  });
 
-  const [currentStyle, setCurrentStyle] = useState([
-    "bg-black",
-    "w-screen",
-    "h-screen",
-  ]);
-  const [currentText, setCurrentText] = useState(null);
-
-  // curent block
   function addChidlren(idToFound, children) {
     let updatedTree = JSON.parse(JSON.stringify(page));
     function addToChildrenById(nodes) {
@@ -94,6 +85,7 @@ export default function App() {
 
   function editNode(idToFound, newStyles, newText = "") {
     let updatedTree = JSON.parse(JSON.stringify(page));
+    console.log(newStyles);
     function editNodeById(nodes) {
       for (const node of nodes) {
         if (node.id === idToFound) {
@@ -114,15 +106,10 @@ export default function App() {
 
   function findNode(idToFound) {
     let updatedTree = JSON.parse(JSON.stringify(page));
-    let foundStyles = [];
-    let foundText = "";
     function findNodeById(nodes) {
       for (const node of nodes) {
         if (node.id === idToFound) {
-          foundStyles = node.styles;
-          if (node.type === "h1") {
-            foundText = node.textContent;
-          }
+          updateSelectedNode(node);
         }
         if (node.childrens?.length > 0) {
           findNodeById(node.childrens);
@@ -130,31 +117,35 @@ export default function App() {
       }
     }
     findNodeById(updatedTree);
-    if (foundText !== "") setCurrentText(foundText);
-
-    setCurrentStyle(foundStyles);
   }
 
   function deleteChildren(idToFound) {
-    if (selected == "1") return;
+    if (selectedNode.id === "1") return;
+
     let updatedTree = JSON.parse(JSON.stringify(page));
-    function deleteChildrenById(nodes, parentNode = null) {
+
+    function deleteNode(nodes, idToDelete) {
+      return nodes.filter((node) => node.id !== idToDelete);
+    }
+
+    function deleteChildrenById(nodes, idToDelete, parentNode = null) {
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        if (node.id === idToFound) {
+        if (node.id === idToDelete) {
           if (parentNode) {
-            parentNode.childrens.splice(i, 1);
+            parentNode.childrens = deleteNode(parentNode.childrens, idToDelete);
           } else {
-            updatedTree = updatedTree.filter((n) => n.id !== idToFound);
+            updatedTree = deleteNode(updatedTree, idToDelete);
           }
           return;
         }
         if (node.childrens?.length > 0) {
-          deleteChildrenById(node.childrens, node);
+          deleteChildrenById(node.childrens, idToDelete, node);
         }
       }
     }
-    deleteChildrenById(updatedTree);
+
+    deleteChildrenById(updatedTree, idToFound);
     const initNode = updatedTree[0];
     updateSelectedNode(initNode);
     updatePage(updatedTree);
@@ -182,12 +173,11 @@ export default function App() {
   }
 
   function handleChangeStyles(index, event) {
-    const newValue = event.target.value;
-    setCurrentStyle((prevStyles) => {
-      const newStyles = [...prevStyles];
-      newStyles[index] = newValue;
-      return newStyles;
-    });
+    const newStyle = event.target.value;
+    const updatedStyles = [...selectedNode.styles];
+    updatedStyles[index] = newStyle;
+    updateSelectedNodeStyles(updatedStyles);
+    updateSelectedNode({ ...selectedNode, styles: updatedStyles });
   }
 
   function parseTree(tree) {
@@ -257,7 +247,7 @@ export default function App() {
       <div className="fixed z-50 right-4 top-4 ">
         <h1 className="text-sky-300 text-3xl">Debug mode</h1>
         <br />
-        <h1 className="text-sky-300 text-3xl">selected id:{selected}</h1>
+        <h1 className="text-sky-300 text-3xl">selected id:{selectedNode.id}</h1>
       </div>
 
       <div className="fixed right-8 bottom-8">
@@ -309,10 +299,10 @@ export default function App() {
             </button>
             <button
               className={`border border-black  rounded-xl mt-4 ${
-                selected === "1" ? "bg-neutral-300" : "bg-red-300"
+                selectedNode.id === "1" ? "bg-neutral-300" : "bg-red-300"
               }`}
-              disabled={selected === "1" ? true : false}
-              onClick={() => deleteChildren(selected)}
+              disabled={selectedNode.id === "1" ? true : false}
+              onClick={() => deleteChildren(selectedNode.id)}
             >
               Удалить узел
             </button>
@@ -324,7 +314,11 @@ export default function App() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              editNode(selected, currentStyle, currentText);
+              editNode(
+                selectedNode.id,
+                selectedNode.styles,
+                selectedNode.textContent
+              );
             }}
             className="flex flex-col gap-2"
           >
@@ -335,7 +329,7 @@ export default function App() {
             <p className="text-center font-bold">Стили:</p>
 
             <div className="flex flex-col gap-2">
-              {currentStyle.map((style, index) => (
+              {selectedNode.styles.map((style, index) => (
                 <input
                   className="border border-black rounded-lg p-2"
                   type="text"

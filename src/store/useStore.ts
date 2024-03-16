@@ -107,5 +107,10 @@ export const useSelectedNodeStore = create(function (set) {
     updateSelectedNode(newSelectedNode) {
       set({ selectedNode: newSelectedNode });
     },
+    updateSelectedNodeStyles(newStyles) {
+      set(function (state) {
+        return { selectedNode: {...state.selectedNode, styles: newStyles} };
+      });
+    },
   };
 });
