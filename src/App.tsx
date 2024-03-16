@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useCreatePageStore } from "./store/useStore";
+import {
+  useCreatePageStore,
+  useCreateNodeStore,
+  useSelectedNodeStore,
+} from "./store/useStore";
 
 interface Node {
-  type: string;
+  nodeType: string;
   styles?: string[];
   id: string;
   parentId: string | null;
@@ -25,18 +29,32 @@ export default function App() {
     return state.updatePage;
   });
 
+  const nodeType = useCreateNodeStore(function (state) {
+    return state.node.nodeType;
+  });
 
-  const [type, setType] = useState("div");
-  const [styles, setStyle] = useState("");
+  const createNodeType = useCreateNodeStore(function (state) {
+    return state.createNodeType;
+  });
+
+  const nodeStyle = useCreateNodeStore(function (state) {
+    return state.node.styles;
+  });
+
+  const createNodeStyles = useCreateNodeStore(function (state) {
+    return state.createNodeStyles;
+  });
+
   const [content, setContent] = useState("");
-  const [selected, setSelected] = useState(1);
-  
+
   const [currentStyle, setCurrentStyle] = useState([
     "bg-black",
     "w-screen",
     "h-screen",
   ]);
   const [currentText, setCurrentText] = useState(null);
+
+  const [selected, setSelected] = useState("1");
 
   function addChidlren(idToFound, children) {
     let updatedTree = JSON.parse(JSON.stringify(page));
@@ -100,7 +118,7 @@ export default function App() {
   }
 
   function deleteChildren(idToFound) {
-    if (selected === 1) return;
+    if (selected == "1") return;
     let updatedTree = JSON.parse(JSON.stringify(page));
     function deleteChildrenById(nodes, parentNode = null) {
       for (let i = 0; i < nodes.length; i++) {
@@ -118,25 +136,25 @@ export default function App() {
         }
       }
     }
-
     deleteChildrenById(updatedTree);
-    setSelected(1);
+    setSelected("1");
     updatePage(updatedTree);
   }
 
-  function createNode(type, styles, textContent, parentId) {
-    if (type === "div") {
+  function createNode(nodeType, styles, textContent, parentId) {
+    console.log(nodeType, styles, textContent, parentId);
+    if (nodeType === "div") {
       return {
-        type,
+        nodeType,
         styles,
         id: uuidv4(),
         childrens: [],
         parentId,
       };
     }
-    if (type === "h1") {
+    if (nodeType === "h1") {
       return {
-        type,
+        nodeType,
         styles,
         id: uuidv4(),
         textContent,
@@ -156,7 +174,7 @@ export default function App() {
 
   function parseTree(tree) {
     return tree.map(function (node) {
-      if (node.type === "div") {
+      if (node.nodeType === "div") {
         if (node.childrens) {
           return (
             <div
@@ -169,7 +187,7 @@ export default function App() {
               key={node.id}
               className={`${node.styles.join(" ")} ${
                 selected === node.id
-                  ? "border border-blue-500 border-dashed"
+                  ? "border border-sky-300 border-dashed"
                   : ""
               }`}
             >
@@ -191,7 +209,7 @@ export default function App() {
           );
         }
       }
-      if (node.type === "h1") {
+      if (node.nodeType === "h1") {
         return (
           <h1
             onClick={(e) => {
@@ -202,7 +220,7 @@ export default function App() {
             id={node.id}
             key={node.id}
             className={`${node.styles.join(" ")} ${
-              selected === node.id ? "border border-blue-500 border-dashed" : ""
+              selected === node.id ? "border border-sky-300 border-dashed" : ""
             }`}
           >
             {node.textContent}
@@ -217,9 +235,9 @@ export default function App() {
     <>
       <div className="">{parseTree(page)}</div>
       <div className="fixed z-50 right-4 top-4 ">
-        <h1 className="text-blue-500 text-3xl">Debug mode</h1>
+        <h1 className="text-sky-300 text-3xl">Debug mode</h1>
         <br />
-        <h1 className="text-blue-500 text-3xl">selected id:{selected}</h1>
+        <h1 className="text-sky-300 text-3xl">selected id:{selected}</h1>
       </div>
 
       <div className="fixed right-8 bottom-8">
@@ -229,7 +247,7 @@ export default function App() {
               e.preventDefault();
               addChidlren(
                 selected,
-                createNode(type, styles.split(" "), content, selected)
+                createNode(nodeType, nodeStyle.split(" "), content, selected)
               );
             }}
             className="flex flex-col gap-2"
@@ -237,8 +255,8 @@ export default function App() {
             <h1 className="text-center text-xl font-bold">Добавить узел</h1>
             <label>Тип элемента</label>
             <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
+              value={nodeType}
+              onChange={(e) => createNodeType(e.target.value)}
               className="border border-black rounded-lg "
             >
               <option value={"div"}>DIV</option>
@@ -246,8 +264,8 @@ export default function App() {
             </select>
             <label>Стили</label>
             <input
-              onChange={(e) => setStyle(e.target.value)}
-              value={styles}
+              onChange={(e) => createNodeStyles(e.target.value)}
+              value={nodeStyle}
               type="text"
               className="border border-black rounded-lg"
             />
@@ -260,15 +278,15 @@ export default function App() {
             />
             <button
               type="submit"
-              className="border border-black bg-blue-500 rounded-xl mt-4 "
+              className="border border-black bg-sky-300 rounded-xl mt-4 "
             >
               Добавить
             </button>
             <button
               className={`border border-black  rounded-xl mt-4 ${
-                selected === 1 ? "bg-neutral-500" : "bg-red-500"
+                selected === "1" ? "bg-neutral-300" : "bg-red-300"
               }`}
-              disabled={selected === 1 ? true : false}
+              disabled={selected === "1" ? true : false}
               onClick={() => deleteChildren(selected)}
             >
               Удалить узел
