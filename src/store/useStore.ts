@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 
+interface NodeState {
+  node: Node;
+}
+interface SelectedNodeState {
+  selectedNode: Node;
+}
 const initialNode = {
   nodeType: "div",
   styles: [
@@ -30,7 +36,7 @@ const initialPage = [initialNode];
 export const useCreatePageStore = create(function (set) {
   return {
     page: initialPage,
-    updatePage(updatedPage) {
+    updatePage(updatedPage: NodeTree) {
       set({ page: updatedPage });
     },
   };
@@ -44,57 +50,56 @@ export const useCreateNodeStore = create(function (set) {
       id: "",
       parentId: "",
       childrens: [],
-      textContent: "",
     },
 
-    createNodeType(nodeType) {
-      set(function (state) {
+    createNodeType(nodeType: string) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, nodeType } };
       });
     },
 
-    createNodeStyles(styles) {
-      set(function (state) {
+    createNodeStyles(styles: string[]) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, styles } };
       });
     },
 
-    createTextContent(textContent) {
-      set(function (state) {
+    createTextContent(textContent: string) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, textContent } };
       });
     },
 
     createNodeId() {
-      set(function (state) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, id: uuidv4() } };
       });
     },
 
-    createParentId(parentId) {
-      set(function (state) {
+    createParentId(parentId: string) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, parentId } };
       });
     },
 
-    createImgSrc(imgSrc) {
-      set(function (state) {
+    createImgSrc(imgSrc: string) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, imgSrc } };
       });
     },
 
-    createInputPlaceholder(inputPlaceholder) {
-      set(function (state) {
+    createInputPlaceholder(inputPlaceholder: string) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, inputPlaceholder } };
       });
     },
-    createInputType(inputType) {
-      set(function (state) {
+    createInputType(inputType: string) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, inputType } };
       });
     },
-    createAHref(aHref) {
-      set(function (state) {
+    createAHref(aHref: string) {
+      set(function (state: NodeState) {
         return { node: { ...state.node, aHref } };
       });
     },
@@ -104,12 +109,12 @@ export const useCreateNodeStore = create(function (set) {
 export const useSelectedNodeStore = create(function (set) {
   return {
     selectedNode: initialNode,
-    updateSelectedNode(newSelectedNode) {
+    updateSelectedNode(newSelectedNode: Node) {
       set({ selectedNode: newSelectedNode });
     },
-    updateSelectedNodeStyles(newStyles) {
-      set(function (state) {
-        return { selectedNode: {...state.selectedNode, styles: newStyles} };
+    updateSelectedNodeStyles(newStyles: string[]) {
+      set(function (state: SelectedNodeState) {
+        return { selectedNode: { ...state.selectedNode, styles: newStyles } };
       });
     },
   };
