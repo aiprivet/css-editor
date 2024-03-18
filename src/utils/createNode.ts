@@ -92,13 +92,33 @@ export const createNode = {
   },
   a(styles, parentId, textContent, aHref) {
     return {
-      nodeType: "span",
+      nodeType: "a",
       styles,
       id: uuidv4(),
       childrens: [],
       parentId,
       textContent,
       aHref,
+    };
+  },
+  img(styles, parentId, imgSrc) {
+    return {
+      nodeType: "img",
+      styles,
+      id: uuidv4(),
+      parentId,
+      imgSrc,
+    };
+  },
+  input(styles, parentId, inputPlaceholder, inputType, inputValue) {
+    return {
+      nodeType: "input",
+      styles,
+      id: uuidv4(),
+      parentId,
+      inputPlaceholder,
+      inputType,
+      inputValue,
     };
   },
 };

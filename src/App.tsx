@@ -1,8 +1,8 @@
 import { useCreatePageStore, useSelectedNodeStore } from "./store/useStore";
 import CreateNodeForm from "./components/CreateNode/CreateNodeForm";
 import EditNodeForm from "./components/EditNode/EditNodeForm";
-import findNode from "./utils/findNode";
-
+import DivNode from "./components/nodes/BlockNodes/DivNode";
+import H1Node from "./components/nodes/TextNodes/H1Node";
 export default function App() {
   const page = useCreatePageStore(function (state) {
     return state.page;
@@ -10,66 +10,20 @@ export default function App() {
   const selectedNode = useSelectedNodeStore(function (state) {
     return state.selectedNode;
   });
-  const updateSelectedNode = useSelectedNodeStore(function (state) {
-    return state.updateSelectedNode;
-  });
-
   function parseTree(tree: NodeTree) {
     return tree.map(function (node: Node) {
-      if (node.nodeType === "div") {
+      const { nodeType } = node;
+      if (nodeType === "div") {
         if (node.childrens) {
           return (
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                updateSelectedNode(node);
-                findNode(node.id, page, updateSelectedNode);
-              }}
-              id={node.id}
-              key={node.id}
-              className={`${node.styles.join(" ")} ${
-                selectedNode.id === node.id
-                  ? "border border-sky-300 border-dashed"
-                  : ""
-              }`}
-            >
+            <DivNode key={node.id} node={node}>
               {parseTree(node.childrens)}
-            </div>
+            </DivNode>
           );
-        } else {
-          return (
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                updateSelectedNode(node);
-                findNode(node.id, page, updateSelectedNode);
-              }}
-              id={node.id}
-              key={node.id}
-              className={node.styles.join(" ")}
-            ></div>
-          );
-        }
+        } else return <DivNode key={node.id} node={node} />;
       }
-      if (node.nodeType === "h1") {
-        return (
-          <h1
-            onClick={(e) => {
-              e.stopPropagation();
-              updateSelectedNode(node);
-              findNode(node.id, page, updateSelectedNode);
-            }}
-            id={node.id}
-            key={node.id}
-            className={`${node.styles.join(" ")} ${
-              selectedNode.id === node.id
-                ? "border border-sky-300 border-dashed"
-                : ""
-            }`}
-          >
-            {node.textContent}
-          </h1>
-        );
+      if (nodeType === "h1") {
+        return <H1Node key={node.id} node={node}></H1Node>;
       }
       return null;
     });
@@ -78,6 +32,7 @@ export default function App() {
   return (
     <>
       <div className="">{parseTree(page)}</div>
+
       <div className="fixed z-50 right-4 top-4 ">
         <h1 className="text-sky-300 text-3xl">Debug mode</h1>
         <br />

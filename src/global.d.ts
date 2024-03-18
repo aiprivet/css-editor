@@ -7,6 +7,7 @@ declare interface Node {
   imgSrc?: string | undefined;
   inputPlaceholder?: string | undefined;
   inputType?: string | undefined;
+  inputValue?:string | undefined;
   textContent?: string | undefined;
   aHref?: string;
 }
