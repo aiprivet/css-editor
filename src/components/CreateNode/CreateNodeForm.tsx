@@ -1,12 +1,13 @@
-import {
-  useCreatePageStore,
-  useCreateNodeStore,
-  useSelectedNodeStore,
-} from "../../store/useStore";
+import { useCreatePageStore, useSelectedNodeStore } from "../../store/useStore";
 
-import { v4 as uuidv4 } from "uuid";
 import addChidlren from "../../utils/addChildren";
-import deleteChildren from "../../utils/deleteChildren";
+import { createNode } from "../../utils/createNode";
+import { useState } from "react";
+import CreateDivNodeForm from "./CreateDivNodeForm";
+import CreateTextNodeForm from "./CreateTextNodeForm";
+import CreateInputNodeForm from "./CreateInputNodeForm";
+import CreateImgNodeForm from "./CreateImgNodeForm";
+import CreateAHrefNodeForm from "./CreateAHrefNodeForm";
 
 export default function CreateNodeForm() {
   const page = useCreatePageStore(function (state) {
@@ -16,30 +17,21 @@ export default function CreateNodeForm() {
   const updatePage = useCreatePageStore(function (state) {
     return state.updatePage;
   });
+  const [nodeType, setNodeType] = useState("div");
 
-  const nodeType = useCreateNodeStore(function (state) {
-    return state.node.nodeType;
-  });
+  const [nodeStyle, setNodeStyles] = useState("");
 
-  const createNodeType = useCreateNodeStore(function (state) {
-    return state.createNodeType;
-  });
+  const [textContent, setTextContent] = useState("");
 
-  const nodeStyle = useCreateNodeStore(function (state) {
-    return state.node.styles;
-  });
+  const [aHref, setAHref] = useState("");
 
-  const createNodeStyles = useCreateNodeStore(function (state) {
-    return state.createNodeStyles;
-  });
+  const [imgSrc, setImgSrc] = useState("");
 
-  const textContent = useCreateNodeStore(function (state) {
-    return state.node.textContent;
-  });
+  const [inputPlaceholder, setInputPlaceholder] = useState("");
 
-  const createTextContent = useCreateNodeStore(function (state) {
-    return state.createTextContent;
-  });
+  const [inputType, setInputType] = useState("");
+
+  const [inputValue, setInputValue] = useState("");
 
   const selectedNode = useSelectedNodeStore(function (state) {
     return state.selectedNode;
@@ -49,49 +41,100 @@ export default function CreateNodeForm() {
     return state.updateSelectedNode;
   });
 
-  function createNode(
-    nodeType: string,
-    styles: string[],
-    textContent: string,
-    parentId: string
-  ) {
-    if (nodeType === "div") {
-      return {
-        nodeType,
-        styles,
-        id: uuidv4(),
-        childrens: [],
-        parentId,
-      };
-    }
-    if (nodeType === "h1") {
-      return {
-        nodeType,
-        styles,
-        id: uuidv4(),
-        textContent,
-        parentId,
-      };
-    }
+  function cls(nodeStyle) {
+    return nodeStyle.split(" ");
   }
 
+  const nodeParams = {
+    div: [selectedNode.id, cls(nodeStyle)],
+    h1: [selectedNode.id, cls(nodeStyle), textContent],
+    h2: [selectedNode.id, cls(nodeStyle), textContent],
+    h3: [selectedNode.id, cls(nodeStyle), textContent],
+    h4: [selectedNode.id, cls(nodeStyle), textContent],
+    h5: [selectedNode.id, cls(nodeStyle), textContent],
+    h6: [selectedNode.id, cls(nodeStyle), textContent],
+    p: [selectedNode.id, cls(nodeStyle), textContent],
+    span: [selectedNode.id, cls(nodeStyle), textContent],
+    a: [selectedNode.id, cls(nodeStyle), textContent, aHref],
+    img: [selectedNode.id, cls(nodeStyle), imgSrc],
+    input: [
+      selectedNode.id,
+      cls(nodeStyle),
+      inputPlaceholder,
+      inputType,
+      inputValue,
+    ],
+  };
+
+  const nodeTypes = Object.keys(nodeParams);
+
+  const nodeFormByType = {
+    div: (
+      <CreateDivNodeForm
+        nodeStyle={nodeStyle}
+        setNodeStyles={setNodeStyles}
+      ></CreateDivNodeForm>
+    ),
+    a: (
+      <CreateAHrefNodeForm
+        nodeStyle={nodeStyle}
+        setNodeStyles={setNodeStyles}
+        aHref={aHref}
+        setAHref={setAHref}
+        textContent={textContent}
+        setTextContent={setTextContent}
+      ></CreateAHrefNodeForm>
+    ),
+    img: (
+      <CreateImgNodeForm
+        nodeStyle={nodeStyle}
+        setNodeStyles={setNodeStyles}
+        imgSrc={imgSrc}
+        setImgSrc={setImgSrc}
+      ></CreateImgNodeForm>
+    ),
+    input: (
+      <CreateInputNodeForm
+        nodeStyle={nodeStyle}
+        setNodeStyles={setNodeStyles}
+        inputPlaceholder={inputPlaceholder}
+        setInputPlaceholder={setInputPlaceholder}
+        inputType={inputType}
+        setInputType={setInputType}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+      ></CreateInputNodeForm>
+    ),
+  };
+  ["h1", "h2", "h3", "h4", "h5", "h6", "p", "span"].forEach(
+    (type) =>
+      (nodeFormByType[type] = (
+        <CreateTextNodeForm
+          nodeStyle={nodeStyle}
+          setNodeStyles={setNodeStyles}
+          setNodeType={setNodeType}
+          nodeType={nodeType}
+          textContent={textContent}
+          setTextContent={setTextContent}
+        ></CreateTextNodeForm>
+      ))
+  );
+  function handleSubmit(event) {
+    event.preventDefault();
+    console.log(nodeParams[nodeType]);
+    addChidlren(
+      selectedNode.id,
+      createNode[nodeType](...nodeParams[nodeType]),
+      page,
+      updateSelectedNode,
+      updatePage
+    );
+  }
   return (
     <div className="border border-black rounded-xl p-8 z-50 bg-white">
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          addChidlren(
-            selectedNode.id,
-            createNode(
-              nodeType,
-              nodeStyle.split(" "),
-              textContent,
-              selectedNode.id
-            ),
-            page,
-            updateSelectedNode,
-            updatePage
-          );
+        onSubmit={(event) => {
+          handleSubmit(event);
         }}
         className="flex flex-col gap-2"
       >
@@ -99,49 +142,18 @@ export default function CreateNodeForm() {
         <label>Тип элемента</label>
         <select
           value={nodeType}
-          onChange={(e) => createNodeType(e.target.value)}
+          onChange={(event) => setNodeType(event.target.value)}
           className="border border-black rounded-lg "
         >
-          <option value={"div"}>DIV</option>
-          <option value={"h1"}>H1</option>
+          {nodeTypes.map(function (type) {
+            return (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            );
+          })}
         </select>
-        <label>Стили</label>
-        <input
-          onChange={(e) => createNodeStyles(e.target.value)}
-          value={nodeStyle}
-          type="text"
-          className="border border-black rounded-lg"
-        />
-        <label>Контент?</label>
-        <input
-          onChange={(e) => createTextContent(e.target.value)}
-          value={textContent}
-          type="text"
-          className="border border-black rounded-lg"
-        />
-        <button
-          type="submit"
-          className="border border-black bg-sky-300 rounded-xl mt-4 "
-        >
-          Добавить
-        </button>
-        <button
-          className={`border border-black  rounded-xl mt-4 ${
-            selectedNode.id === "1" ? "bg-neutral-300" : "bg-red-300"
-          }`}
-          disabled={selectedNode.id === "1" ? true : false}
-          onClick={() =>
-            deleteChildren(
-              selectedNode.id,
-              selectedNode,
-              updateSelectedNode,
-              page,
-              updatePage
-            )
-          }
-        >
-          Удалить узел
-        </button>
+        {nodeFormByType[nodeType]}
       </form>
     </div>
   );

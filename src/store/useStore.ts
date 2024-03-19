@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { v4 as uuidv4 } from "uuid";
 
 interface NodeState {
   node: Node;
@@ -24,7 +23,7 @@ const initialNode = {
       styles: ["text-white", "text-3xl"],
       id: "2",
       childrens: [],
-      textContent: "Пора создать первый компонент🌝",
+      textContent: "Удали этот блок и создай новый🌝",
       parentId: "1",
     },
   ],
@@ -67,18 +66,6 @@ export const useCreateNodeStore = create(function (set) {
     createTextContent(textContent: string) {
       set(function (state: NodeState) {
         return { node: { ...state.node, textContent } };
-      });
-    },
-
-    createNodeId() {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, id: uuidv4() } };
-      });
-    },
-
-    createParentId(parentId: string) {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, parentId } };
       });
     },
 

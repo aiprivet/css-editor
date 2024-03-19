@@ -1,7 +1,19 @@
 import { v4 as uuidv4 } from "uuid";
-
+interface Node {
+  nodeType: string | undefined;
+  id: string;
+  parentId: string | null;
+  styles?: string[];
+  childrens?: Node[] | undefined;
+  imgSrc?: string | undefined;
+  inputPlaceholder?: string | undefined;
+  inputType?: string | undefined;
+  inputValue?: string | undefined;
+  textContent?: string | undefined;
+  aHref?: string;
+}
 export const createNode = {
-  div(styles, parentId) {
+  div(parentId, styles) {
     return {
       nodeType: "div",
       styles,
@@ -10,7 +22,17 @@ export const createNode = {
       parentId,
     };
   },
-  h1(styles, parentId, textContent) {
+  button(parentId, styles, textContent) {
+    return {
+      nodeType: "button",
+      styles,
+      id: uuidv4(),
+      childrens: [],
+      parentId,
+      textContent,
+    };
+  },
+  h1(parentId, styles, textContent) {
     return {
       nodeType: "h1",
       styles,
@@ -20,7 +42,7 @@ export const createNode = {
       textContent,
     };
   },
-  h2(styles, parentId, textContent) {
+  h2(parentId, styles, textContent) {
     return {
       nodeType: "h2",
       styles,
@@ -30,7 +52,7 @@ export const createNode = {
       textContent,
     };
   },
-  h3(styles, parentId, textContent) {
+  h3(parentId, styles, textContent) {
     return {
       nodeType: "h3",
       styles,
@@ -40,7 +62,7 @@ export const createNode = {
       textContent,
     };
   },
-  h4(styles, parentId, textContent) {
+  h4(parentId, styles, textContent) {
     return {
       nodeType: "h4",
       styles,
@@ -50,7 +72,7 @@ export const createNode = {
       textContent,
     };
   },
-  h5(styles, parentId, textContent) {
+  h5(parentId, styles, textContent) {
     return {
       nodeType: "h5",
       styles,
@@ -60,7 +82,7 @@ export const createNode = {
       textContent,
     };
   },
-  h6(styles, parentId, textContent) {
+  h6(parentId, styles, textContent) {
     return {
       nodeType: "h6",
       styles,
@@ -70,7 +92,7 @@ export const createNode = {
       textContent,
     };
   },
-  p(styles, parentId, textContent) {
+  p(parentId, styles, textContent) {
     return {
       nodeType: "p",
       styles,
@@ -80,7 +102,7 @@ export const createNode = {
       textContent,
     };
   },
-  span(styles, parentId, textContent) {
+  span(parentId, styles, textContent) {
     return {
       nodeType: "span",
       styles,
@@ -90,7 +112,7 @@ export const createNode = {
       textContent,
     };
   },
-  a(styles, parentId, textContent, aHref) {
+  a(parentId, styles, textContent, aHref) {
     return {
       nodeType: "a",
       styles,
@@ -101,7 +123,7 @@ export const createNode = {
       aHref,
     };
   },
-  img(styles, parentId, imgSrc) {
+  img(parentId, styles, imgSrc) {
     return {
       nodeType: "img",
       styles,
@@ -110,7 +132,7 @@ export const createNode = {
       imgSrc,
     };
   },
-  input(styles, parentId, inputPlaceholder, inputType, inputValue) {
+  input(parentId, styles, inputPlaceholder, inputType, inputValue) {
     return {
       nodeType: "input",
       styles,

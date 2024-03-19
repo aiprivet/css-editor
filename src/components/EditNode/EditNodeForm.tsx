@@ -1,4 +1,5 @@
 import { useCreatePageStore, useSelectedNodeStore } from "../../store/useStore";
+import deleteChildren from "../../utils/deleteChildren";
 import editNode from "../../utils/editNode";
 import handleChangeStyles from "../../utils/handleChangeStyles";
 
@@ -65,6 +66,23 @@ export default function EditNodeForm() {
           >
             Cохранить
           </button>
+          <button
+          className={`border border-black  rounded-xl mt-4 ${
+            selectedNode.id === "1" ? "bg-neutral-300" : "bg-red-300"
+          }`}
+          disabled={selectedNode.id === "1" ? true : false}
+          onClick={() =>
+            deleteChildren(
+              selectedNode.id,
+              selectedNode,
+              updateSelectedNode,
+              page,
+              updatePage
+            )
+          }
+        >
+          Удалить узел
+        </button>
         </div>
       </form>
     </div>

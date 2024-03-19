@@ -5,13 +5,12 @@ import {
 import findNode from "../../../utils/findNode";
 import cl from "../../../utils/cl";
 
-interface ImgNodeProps {
+interface ButtonNodeProps {
   children?: React.ReactNode;
   node: Node;
 }
 
-export default function ImgNode({ node }: ImgNodeProps) {
-  console.log(node.imgSrc);
+export default function ButtonNode({ children, node }: ButtonNodeProps) {
   const selectedNode = useSelectedNodeStore(function (state) {
     return state.selectedNode;
   });
@@ -31,15 +30,15 @@ export default function ImgNode({ node }: ImgNodeProps) {
   }
 
   return (
-    <img
+    <Button
       onClick={(event) => {
         handleSelectNode(event);
       }}
       id={node.id}
       key={node.id}
       className={cl(node, selectedNode)}
-      src={node.imgSrc}
-      alt={node.textContent}
-    />
+    >
+      {node.textContent}
+    </Button>
   );
 }
