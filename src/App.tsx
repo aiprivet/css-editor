@@ -14,6 +14,9 @@ import ANode from "./components/nodes/TextNodes/ANode";
 import InputNode from "./components/nodes/InputNodes/InputNode";
 import ImgNode from "./components/nodes/ImageNode/ImgNode";
 import ButtonNode from "./components/nodes/ButtonNode/BtnNode";
+import { SiTailwindcss } from "react-icons/si";
+import Button from "./ui/Button/Button";
+import { FaArrowUp } from "react-icons/fa6";
 
 export default function App() {
   const page = useCreatePageStore(function (state) {
@@ -137,13 +140,21 @@ export default function App() {
 
   return (
     <>
-      <div className="">{parseTree(page)}</div>
+      <div className="hidden bg-white w-screen h-12 fixed border-b border-neutral-100 hover:flex justify-between p-6">
+        <div className="flex justify-center items-center gap-2 ml-2">
+          <div className="text-sky-500">
+            <SiTailwindcss size={24} />
+          </div>
+          <p className="text-sky-950">Tailwind editor</p>
+        </div>
 
-      <div className="fixed z-50 right-4 top-4 ">
-        <h1 className="text-sky-300 text-3xl">Debug mode</h1>
-        <br />
-        <h1 className="text-sky-300 text-3xl">selected id:{selectedNode.id}</h1>
+        <div className="flex justify-center items-center gap-2 ">
+          <Button type={"danger"}>Удалить все</Button>
+          <Button type={"primary"}>Импортировать</Button>
+          <Button type={"success"}>Сохранить</Button>
+        </div>
       </div>
+      <div className="">{parseTree(page)}</div>
 
       <div className="fixed right-8 bottom-8">
         <CreateNodeForm />

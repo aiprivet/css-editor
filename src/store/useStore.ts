@@ -41,58 +41,6 @@ export const useCreatePageStore = create(function (set) {
   };
 });
 
-export const useCreateNodeStore = create(function (set) {
-  return {
-    node: {
-      nodeType: "div",
-      styles: [" "],
-      id: "",
-      parentId: "",
-      childrens: [],
-    },
-
-    createNodeType(nodeType: string) {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, nodeType } };
-      });
-    },
-
-    createNodeStyles(styles: string[]) {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, styles } };
-      });
-    },
-
-    createTextContent(textContent: string) {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, textContent } };
-      });
-    },
-
-    createImgSrc(imgSrc: string) {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, imgSrc } };
-      });
-    },
-
-    createInputPlaceholder(inputPlaceholder: string) {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, inputPlaceholder } };
-      });
-    },
-    createInputType(inputType: string) {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, inputType } };
-      });
-    },
-    createAHref(aHref: string) {
-      set(function (state: NodeState) {
-        return { node: { ...state.node, aHref } };
-      });
-    },
-  };
-});
-
 export const useSelectedNodeStore = create(function (set) {
   return {
     selectedNode: initialNode,
@@ -102,6 +50,23 @@ export const useSelectedNodeStore = create(function (set) {
     updateSelectedNodeStyles(newStyles: string[]) {
       set(function (state: SelectedNodeState) {
         return { selectedNode: { ...state.selectedNode, styles: newStyles } };
+      });
+    },
+    updateSelectedNodeTextContent(newTextContent: string) {
+      set(function (state: SelectedNodeState) {
+        return {
+          selectedNode: { ...state.selectedNode, textContent: newTextContent },
+        };
+      });
+    },
+    updateSelectedNodeAHref(newAHref: string) {
+      set(function (state: SelectedNodeState) {
+        return { selectedNode: { ...state.selectedNode, aHref: newAHref } };
+      });
+    },
+    updateSelectedNodeImgSrc(newImgSrc: string) {
+      set(function (state: SelectedNodeState) {
+        return { selectedNode: { ...state.selectedNode, imgSrc: newImgSrc } };
       });
     },
   };

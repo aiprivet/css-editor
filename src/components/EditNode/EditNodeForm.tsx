@@ -1,7 +1,14 @@
 import { useCreatePageStore, useSelectedNodeStore } from "../../store/useStore";
 import deleteChildren from "../../utils/deleteChildren";
 import editNode from "../../utils/editNode";
-import handleChangeStyles from "../../utils/handleChangeStyles";
+import handleAddStyles from "../../utils/handleAddStyles";
+import Button from "../../ui/Button/Button";
+import Badge from "../../ui/Badge/Badge";
+import handleDeleteStyle from "../../utils/handleDeleteStyles";
+import { useState } from "react";
+import handleChangeTextContent from "../../utils/handleChangeText";
+import changeAHref from "../../utils/changeAHref";
+import changeImgSrc from "../../utils/changeImgSrc";
 
 export default function EditNodeForm() {
   const page = useCreatePageStore(function (state) {
@@ -21,9 +28,19 @@ export default function EditNodeForm() {
   const updateSelectedNode = useSelectedNodeStore(function (state) {
     return state.updateSelectedNode;
   });
+  const updateSelectedNodeTextContent = useSelectedNodeStore(function (state) {
+    return state.updateSelectedNodeTextContent;
+  });
+  const updateSelectedNodeAHref = useSelectedNodeStore(function (state) {
+    return state.updateSelectedNodeAHref;
+  });
+  const updateSelectedNodeImgSrc = useSelectedNodeStore(function (state) {
+    return state.updateSelectedNodeImgSrc;
+  });
+  const [newStyle, setNewStyle] = useState("");
 
   return (
-    <div className="border border-black rounded-xl p-8 z-50 bg-white">
+    <div className=" flex flex-col gap-2 border border-neutral-200 rounded-xl p-8 z-50 bg-neutral-100 ">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -35,54 +52,137 @@ export default function EditNodeForm() {
             selectedNode.textContent
           );
         }}
-        className="flex flex-col gap-2"
       >
-        <h2 className="text-center text-xl font-bold">Редактировать узел</h2>
-
-        <p className="text-center font-bold">Стили:</p>
+        <h2 className="text-center text-xl font-bold mb-2">
+          Редактировать узел
+        </h2>
 
         <div className="flex flex-col gap-2">
-          {selectedNode.styles.map((style: string, index: number) => (
-            <input
-              className="border border-black rounded-lg p-2"
-              type="text"
-              value={style}
-              key={index}
-              onChange={(event) =>
-                handleChangeStyles(
-                  index,
-                  event,
-                  selectedNode,
-                  updateSelectedNodeStyles,
-                  updateSelectedNode
-                )
-              }
-            />
-          ))}
+          <label className="text-start">Стили</label>
+          <div className="flex flex-wrap max-w-52 max-h-24 overflow-scroll gap-2 border border-neutral-400 rounded-xl p-2">
+            {selectedNode.styles.map((style: string, index: number) => (
+              <Badge
+                cl={style}
+                key={index}
+                onClick={() =>
+                  handleDeleteStyle(
+                    index,
+                    selectedNode,
+                    updateSelectedNodeStyles,
+                    updateSelectedNode
+                  )
+                }
+              />
+            ))}
+          </div>
+          <label className="text-start">Добавить стиль</label>
+
+          <input
+            onChange={(event) => {
+              setNewStyle(event.target.value);
+            }}
+            type="text"
+            className="border border-neutral-300 p-2 rounded-lg "
+          />
+          {selectedNode.textContent ? (
+            <>
+              <label className="text-start">Редактировать текст</label>
+
+              <input
+                onChange={(event) => {
+                  handleChangeTextContent(
+                    event.target.value,
+                    selectedNode,
+                    updateSelectedNodeTextContent,
+                    updateSelectedNode
+                  );
+                }}
+                type="text"
+                value={selectedNode.textContent}
+                className="border border-neutral-300 p-2 rounded-lg "
+              />
+            </>
+          ) : (
+            ""
+          )}
+          {selectedNode.aHref ? (
+            <>
+              <label className="text-start">Редактировать ссылку</label>
+
+              <input
+                onChange={(event) => {
+                  changeAHref(
+                    event.target.value,
+                    selectedNode,
+                    updateSelectedNodeAHref,
+                    updateSelectedNode
+                  );
+                }}
+                type="text"
+                value={selectedNode.aHref}
+                className="border border-neutral-300 p-2 rounded-lg "
+              />
+            </>
+          ) : (
+            ""
+          )}
+
+          {selectedNode.imgSrc ? (
+            <>
+              <label className="text-start">Редактировать ссылку на изображение</label>
+
+              <input
+                onChange={(event) => {
+                  changeImgSrc(
+                    event.target.value,
+                    selectedNode,
+                    updateSelectedNodeImgSrc,
+                    updateSelectedNode
+                  );
+                }}
+                type="text"
+                value={selectedNode.aHref}
+                className="border border-neutral-300 p-2 rounded-lg "
+              />
+            </>
+          ) : (
+            ""
+          )}
+
+          <Button
+            onClick={() => {
+              if (newStyle.length === 0) return;
+              handleAddStyles(
+                newStyle,
+                selectedNode,
+                updateSelectedNodeStyles,
+                updateSelectedNode
+              );
+            }}
+            type={"success"}
+          >
+            Сохранить
+          </Button>
 
           <button
-            type="submit"
-            className="border border-black bg-green-400 rounded-xl mt-4 "
+            className={`text-white px-4 py-2 rounded-lg text-xs hover:bg-gradient-to-br transition ${
+              selectedNode.id === "1"
+                ? "bg-gradient-to-r from-neutral-400 via-neutral-500 to-neutral-600 "
+                : "bg-gradient-to-r from-red-400 via-red-500 to-red-600 "
+            }`}
+            disabled={selectedNode.id === "1" ? true : false}
+            onClick={() =>
+              deleteChildren(
+                selectedNode.id,
+                selectedNode,
+                updateSelectedNode,
+                page,
+                updatePage
+              )
+            }
           >
-            Cохранить
+            Удалить узел
           </button>
-          <button
-          className={`border border-black  rounded-xl mt-4 ${
-            selectedNode.id === "1" ? "bg-neutral-300" : "bg-red-300"
-          }`}
-          disabled={selectedNode.id === "1" ? true : false}
-          onClick={() =>
-            deleteChildren(
-              selectedNode.id,
-              selectedNode,
-              updateSelectedNode,
-              page,
-              updatePage
-            )
-          }
-        >
-          Удалить узел
-        </button>
         </div>
       </form>
     </div>

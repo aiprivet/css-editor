@@ -1,3 +1,5 @@
+import Button from "../../ui/Button/Button";
+
 export default function CreateInputNodeForm({
   nodeStyle,
   setNodeStyles,
@@ -39,12 +41,8 @@ export default function CreateInputNodeForm({
         className="border border-black rounded-lg"
       />
 
-      <button
-        type="submit"
-        className="border border-black bg-sky-300 rounded-xl mt-4 "
-      >
-        Добавить
-      </button>
+<Button type={"primary"}>Добавить</Button>
+
     </>
   );
 }

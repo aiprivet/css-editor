@@ -131,14 +131,14 @@ export default function CreateNodeForm() {
     );
   }
   return (
-    <div className="border border-black rounded-xl p-8 z-50 bg-white">
+    <div className="border border-neutral-200 bg-neutral-100 rounded-xl p-8 z-50 ">
       <form
         onSubmit={(event) => {
           handleSubmit(event);
         }}
         className="flex flex-col gap-2"
       >
-        <h1 className="text-center text-xl font-bold">Добавить узел</h1>
+        <h1 className="text-center text-xl font-bold mb-2">Добавить узел</h1>
         <label>Тип элемента</label>
         <select
           value={nodeType}
