@@ -13,14 +13,14 @@ export default function CreateImgNodeForm({
         onChange={(event) => setNodeStyles(event.target.value)}
         value={nodeStyle}
         type="text"
-        className="border border-black rounded-lg"
+        className="border border-neutral-300 p-2 rounded-lg"
       />
       <label>Ссылка на изображение</label>
       <input
         onChange={(event) => setImgSrc(event.target.value)}
         value={imgSrc}
         type="text"
-        className="border border-black rounded-lg"
+        className="border border-neutral-300 p-2 rounded-lg"
       />
           <Button type={"primary"}>Добавить</Button>
 

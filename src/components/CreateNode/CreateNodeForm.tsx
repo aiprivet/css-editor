@@ -2,13 +2,13 @@ import { useCreatePageStore, useSelectedNodeStore } from "../../store/useStore";
 
 import addChidlren from "../../utils/addChildren";
 import { createNode } from "../../utils/createNode";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateDivNodeForm from "./CreateDivNodeForm";
 import CreateTextNodeForm from "./CreateTextNodeForm";
 import CreateInputNodeForm from "./CreateInputNodeForm";
 import CreateImgNodeForm from "./CreateImgNodeForm";
 import CreateAHrefNodeForm from "./CreateAHrefNodeForm";
-
+import CreateButtonNodeForm from "./CreateButtonNodeForm";
 export default function CreateNodeForm() {
   const page = useCreatePageStore(function (state) {
     return state.page;
@@ -17,6 +17,7 @@ export default function CreateNodeForm() {
   const updatePage = useCreatePageStore(function (state) {
     return state.updatePage;
   });
+
   const [nodeType, setNodeType] = useState("div");
 
   const [nodeStyle, setNodeStyles] = useState("");
@@ -32,6 +33,8 @@ export default function CreateNodeForm() {
   const [inputType, setInputType] = useState("");
 
   const [inputValue, setInputValue] = useState("");
+
+  const [formNodeType, setFormNodeType] = useState("div");
 
   const selectedNode = useSelectedNodeStore(function (state) {
     return state.selectedNode;
@@ -64,9 +67,10 @@ export default function CreateNodeForm() {
       inputType,
       inputValue,
     ],
+    button: [selectedNode.id, cls(nodeStyle), textContent, aHref],
   };
 
-  const nodeTypes = Object.keys(nodeParams);
+  const nodeTypes = ["div", "text", "img", "button", "input", "a"];
 
   const nodeFormByType = {
     div: (
@@ -74,6 +78,16 @@ export default function CreateNodeForm() {
         nodeStyle={nodeStyle}
         setNodeStyles={setNodeStyles}
       ></CreateDivNodeForm>
+    ),
+    text: (
+      <CreateTextNodeForm
+        nodeStyle={nodeStyle}
+        setNodeStyles={setNodeStyles}
+        setNodeType={setNodeType}
+        nodeType={nodeType}
+        textContent={textContent}
+        setTextContent={setTextContent}
+      ></CreateTextNodeForm>
     ),
     a: (
       <CreateAHrefNodeForm
@@ -105,23 +119,18 @@ export default function CreateNodeForm() {
         setInputValue={setInputValue}
       ></CreateInputNodeForm>
     ),
+    button: (
+      <CreateButtonNodeForm
+        nodeStyle={nodeStyle}
+        setNodeStyles={setNodeStyles}
+        textContent={textContent}
+        setTextContent={setTextContent}
+      ></CreateButtonNodeForm>
+    ),
   };
-  ["h1", "h2", "h3", "h4", "h5", "h6", "p", "span"].forEach(
-    (type) =>
-      (nodeFormByType[type] = (
-        <CreateTextNodeForm
-          nodeStyle={nodeStyle}
-          setNodeStyles={setNodeStyles}
-          setNodeType={setNodeType}
-          nodeType={nodeType}
-          textContent={textContent}
-          setTextContent={setTextContent}
-        ></CreateTextNodeForm>
-      ))
-  );
+
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(nodeParams[nodeType]);
     addChidlren(
       selectedNode.id,
       createNode[nodeType](...nodeParams[nodeType]),
@@ -141,9 +150,16 @@ export default function CreateNodeForm() {
         <h1 className="text-center text-xl font-bold mb-2">Добавить узел</h1>
         <label>Тип элемента</label>
         <select
-          value={nodeType}
-          onChange={(event) => setNodeType(event.target.value)}
-          className="border border-black rounded-lg "
+          value={formNodeType}
+          onChange={(event) => {
+            setFormNodeType(event.target.value);
+            if (event.target.value === "text") {
+              setNodeType("h1");
+            } else {
+              setNodeType(event.target.value);
+            }
+          }}
+          className="border border-neutral-300 p-2 rounded-lg "
         >
           {nodeTypes.map(function (type) {
             return (
@@ -153,7 +169,7 @@ export default function CreateNodeForm() {
             );
           })}
         </select>
-        {nodeFormByType[nodeType]}
+        {nodeFormByType[formNodeType]}
       </form>
     </div>
   );

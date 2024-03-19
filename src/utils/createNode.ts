@@ -1,17 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-interface Node {
-  nodeType: string | undefined;
-  id: string;
-  parentId: string | null;
-  styles?: string[];
-  childrens?: Node[] | undefined;
-  imgSrc?: string | undefined;
-  inputPlaceholder?: string | undefined;
-  inputType?: string | undefined;
-  inputValue?: string | undefined;
-  textContent?: string | undefined;
-  aHref?: string;
-}
+
 export const createNode = {
   div(parentId, styles) {
     return {

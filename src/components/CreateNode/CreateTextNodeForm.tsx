@@ -15,7 +15,7 @@ export default function CreateTextNodeForm({
       <select
         value={nodeType}
         onChange={(event) => setNodeType(event.target.value)}
-        className="border border-black rounded-lg "
+        className="border border-neutral-300 p-2 rounded-lg "
       >
         {textTypes.map(function (type) {
           return (
@@ -31,14 +31,14 @@ export default function CreateTextNodeForm({
         onChange={(event) => setNodeStyles(event.target.value)}
         value={nodeStyle}
         type="text"
-        className="border border-black rounded-lg"
+        className="border border-neutral-300 p-2 rounded-lg"
       />
       <label>Текст</label>
       <input
         onChange={(event) => setTextContent(event.target.value)}
         value={textContent}
         type="text"
-        className="border border-black rounded-lg"
+        className="border border-neutral-300 p-2 rounded-lg"
       />
 
       <Button type={"primary"}>Добавить</Button>

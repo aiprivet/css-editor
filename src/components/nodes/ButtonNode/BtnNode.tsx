@@ -30,7 +30,7 @@ export default function ButtonNode({ children, node }: ButtonNodeProps) {
   }
 
   return (
-    <Button
+    <button
       onClick={(event) => {
         handleSelectNode(event);
       }}
@@ -39,6 +39,6 @@ export default function ButtonNode({ children, node }: ButtonNodeProps) {
       className={cl(node, selectedNode)}
     >
       {node.textContent}
-    </Button>
+    </button>
   );
 }

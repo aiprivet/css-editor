@@ -6,7 +6,6 @@ export default function editNode(
   newText = ""
 ) {
   let updatedTree = JSON.parse(JSON.stringify(page));
-  console.log(newStyles);
   function editNodeById(nodes: NodeTree) {
     for (const node of nodes) {
       if (node.id === idToFound) {

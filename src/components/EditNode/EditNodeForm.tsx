@@ -5,7 +5,7 @@ import handleAddStyles from "../../utils/handleAddStyles";
 import Button from "../../ui/Button/Button";
 import Badge from "../../ui/Badge/Badge";
 import handleDeleteStyle from "../../utils/handleDeleteStyles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import handleChangeTextContent from "../../utils/handleChangeText";
 import changeAHref from "../../utils/changeAHref";
 import changeImgSrc from "../../utils/changeImgSrc";
@@ -14,6 +14,8 @@ export default function EditNodeForm() {
   const page = useCreatePageStore(function (state) {
     return state.page;
   });
+
+  const [newStyle, setNewStyle] = useState("");
 
   const updatePage = useCreatePageStore(function (state) {
     return state.updatePage;
@@ -37,7 +39,6 @@ export default function EditNodeForm() {
   const updateSelectedNodeImgSrc = useSelectedNodeStore(function (state) {
     return state.updateSelectedNodeImgSrc;
   });
-  const [newStyle, setNewStyle] = useState("");
 
   return (
     <div className=" flex flex-col gap-2 border border-neutral-200 rounded-xl p-8 z-50 bg-neutral-100 ">
@@ -81,6 +82,7 @@ export default function EditNodeForm() {
             onChange={(event) => {
               setNewStyle(event.target.value);
             }}
+            value={newStyle}
             type="text"
             className="border border-neutral-300 p-2 rounded-lg "
           />
@@ -129,7 +131,9 @@ export default function EditNodeForm() {
 
           {selectedNode.imgSrc ? (
             <>
-              <label className="text-start">Редактировать ссылку на изображение</label>
+              <label className="text-start">
+                Редактировать ссылку на изображение
+              </label>
 
               <input
                 onChange={(event) => {
@@ -150,15 +154,14 @@ export default function EditNodeForm() {
           )}
 
           <Button
-            onClick={() => {
-              if (newStyle.length === 0) return;
+            onClick={() =>
               handleAddStyles(
                 newStyle,
                 selectedNode,
                 updateSelectedNodeStyles,
                 updateSelectedNode
-              );
-            }}
+              )
+            }
             type={"success"}
           >
             Сохранить

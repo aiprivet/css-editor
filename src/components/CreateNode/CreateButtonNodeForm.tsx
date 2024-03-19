@@ -1,23 +1,14 @@
 import Button from "../../ui/Button/Button";
 
-export default function CreateAHrefNodeForm({
+export default function CreateButtonNodeForm({
   nodeStyle,
   setNodeStyles,
   textContent,
   setTextContent,
-  aHref,
-  setAHref,
 }) {
   return (
     <>
-      <label>Ссылка</label>
-      <input
-        onChange={(event) => setAHref(event.target.value)}
-        value={aHref}
-        type="text"
-        className="border border-neutral-300 p-2 rounded-lg"
-      />
-
+     
       <label>Стили</label>
       <input
         onChange={(event) => setNodeStyles(event.target.value)}
@@ -32,8 +23,7 @@ export default function CreateAHrefNodeForm({
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-           <Button type={"primary"}>Добавить</Button>
-
+      <Button type={"primary"}>Добавить</Button>
     </>
   );
 }
