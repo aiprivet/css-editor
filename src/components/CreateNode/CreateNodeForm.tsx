@@ -147,8 +147,8 @@ export default function CreateNodeForm() {
         }}
         className="flex flex-col gap-2"
       >
-        <h1 className="text-center text-xl font-bold mb-2">Добавить узел</h1>
-        <label>Тип элемента</label>
+        <h1 className="text-center text-xl font-bold mb-2">Add node</h1>
+        <label>Node type</label>
         <select
           value={formNodeType}
           onChange={(event) => {

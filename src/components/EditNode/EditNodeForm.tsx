@@ -48,12 +48,10 @@ export default function EditNodeForm() {
   return (
     <div className=" flex flex-col gap-2 border border-neutral-200 rounded-xl p-8 z-50 bg-neutral-100 ">
       <div>
-        <h2 className="text-center text-xl font-bold mb-2">
-          Редактировать узел
-        </h2>
+        <h2 className="text-center text-xl font-bold mb-2">Edit node</h2>
 
         <div className="flex flex-col gap-2">
-          <label className="text-start">Стили</label>
+          <label className="text-start">Tailwind classnames</label>
           <div className="flex flex-wrap max-w-52 max-h-24 overflow-scroll gap-2 border border-neutral-400 rounded-xl p-2">
             {selectedNode.styles.map((style: string, index: number) => (
               <Badge
@@ -72,40 +70,40 @@ export default function EditNodeForm() {
               />
             ))}
           </div>
-          <label className="text-start">Добавить стиль</label>
+          <label className="text-start">Add tailwind classnames</label>
 
-            <form
-            className="flex h-fit w-fit gap-2 flex-row items-center" 
-              onSubmit={(event) => {
-                event.preventDefault();
-                addStyles(
-                  newStyle,
-                  setNewStyle,
-                  selectedNode,
-                  updateSelectedNodeStyles,
-                  updateSelectedNode,
-                  page,
-                  updatePage
-                );
-              }}
-            >
-              <div>
-                <input
-                  onChange={(event) => {
-                    setNewStyle(event.target.value);
-                  }}
-                  value={newStyle}
-                  type="text"
-                  className="border border-neutral-300 p-1 rounded-lg w-32"
-                />
-              </div>
-              <div>
-                <Button type="primary">Добавить</Button>
-              </div>
-            </form>
+          <form
+            className="flex h-fit w-fit gap-2 flex-row items-center"
+            onSubmit={(event) => {
+              event.preventDefault();
+              addStyles(
+                newStyle,
+                setNewStyle,
+                selectedNode,
+                updateSelectedNodeStyles,
+                updateSelectedNode,
+                page,
+                updatePage
+              );
+            }}
+          >
+            <div>
+              <input
+                onChange={(event) => {
+                  setNewStyle(event.target.value);
+                }}
+                value={newStyle}
+                type="text"
+                className="border border-neutral-300 p-1 rounded-lg w-32"
+              />
+            </div>
+            <div>
+              <Button type="primary">Add</Button>
+            </div>
+          </form>
           {selectedNode.textContent ? (
             <>
-              <label className="text-start">Редактировать текст</label>
+              <label className="text-start">Edit text</label>
 
               <input
                 onChange={(event) => {
@@ -128,7 +126,7 @@ export default function EditNodeForm() {
           )}
           {selectedNode.aHref ? (
             <>
-              <label className="text-start">Редактировать ссылку</label>
+              <label className="text-start">Edit link</label>
 
               <input
                 onChange={(event) => {
@@ -152,9 +150,7 @@ export default function EditNodeForm() {
 
           {selectedNode.imgSrc ? (
             <>
-              <label className="text-start">
-                Редактировать ссылку на изображение
-              </label>
+              <label className="text-start">Edit image src</label>
 
               <input
                 onChange={(event) => {
@@ -192,7 +188,7 @@ export default function EditNodeForm() {
               );
             }}
           >
-            Удалить узел
+            Delete node
           </button>
         </div>
       </div>

@@ -23,7 +23,7 @@ const initialNode = {
       styles: ["text-white", "text-3xl"],
       id: "2",
       childrens: [],
-      textContent: "Удали этот блок и создай новый🌝",
+      textContent: "Delete this node and create a new one!🌝",
       parentId: "1",
     },
   ],

@@ -10,7 +10,7 @@ export default function CreateAHrefNodeForm({
 }) {
   return (
     <>
-      <label>Ссылка</label>
+      <label>Link</label>
       <input
         onChange={(event) => setAHref(event.target.value)}
         value={aHref}
@@ -18,22 +18,21 @@ export default function CreateAHrefNodeForm({
         className="border border-neutral-300 p-2 rounded-lg"
       />
 
-      <label>Стили</label>
+      <label>Tailwnd classnames</label>
       <input
         onChange={(event) => setNodeStyles(event.target.value)}
         value={nodeStyle}
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-      <label>Текст</label>
+      <label>Text</label>
       <input
         onChange={(event) => setTextContent(event.target.value)}
         value={textContent}
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-           <Button type={"primary"}>Добавить</Button>
-
+      <Button type={"primary"}>Add</Button>
     </>
   );
 }

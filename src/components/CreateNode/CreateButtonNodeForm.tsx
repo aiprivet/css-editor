@@ -8,22 +8,21 @@ export default function CreateButtonNodeForm({
 }) {
   return (
     <>
-     
-      <label>Стили</label>
+      <label>Tailwnd classnames</label>
       <input
         onChange={(event) => setNodeStyles(event.target.value)}
         value={nodeStyle}
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-      <label>Текст</label>
+      <label>Text</label>
       <input
         onChange={(event) => setTextContent(event.target.value)}
         value={textContent}
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-      <Button type={"primary"}>Добавить</Button>
+      <Button type={"primary"}>Add</Button>
     </>
   );
 }

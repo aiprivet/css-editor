@@ -11,7 +11,7 @@ export default function CreateTextNodeForm({
   const textTypes = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "span"];
   return (
     <>
-      <label>Семантика</label>
+      <label>Semanthic</label>
       <select
         value={nodeType}
         onChange={(event) => setNodeType(event.target.value)}
@@ -26,14 +26,14 @@ export default function CreateTextNodeForm({
         })}
       </select>
 
-      <label>Стили</label>
+      <label>Tailwnd classnames</label>
       <input
         onChange={(event) => setNodeStyles(event.target.value)}
         value={nodeStyle}
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-      <label>Текст</label>
+      <label>Text</label>
       <input
         onChange={(event) => setTextContent(event.target.value)}
         value={textContent}
@@ -41,7 +41,7 @@ export default function CreateTextNodeForm({
         className="border border-neutral-300 p-2 rounded-lg"
       />
 
-      <Button type={"primary"}>Добавить</Button>
+      <Button type={"primary"}>Add</Button>
     </>
   );
 }

@@ -12,7 +12,7 @@ export default function CreateInputNodeForm({
 }) {
   return (
     <>
-      <label>Тип</label>
+      <label>Input type</label>
       <input
         onChange={(event) => setInputType(event.target.value)}
         value={inputType}
@@ -33,7 +33,7 @@ export default function CreateInputNodeForm({
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-      <label>Стили</label>
+      <label>Tailwnd classnames</label>
       <input
         onChange={(event) => setNodeStyles(event.target.value)}
         value={nodeStyle}
@@ -41,8 +41,7 @@ export default function CreateInputNodeForm({
         className="border border-neutral-300 p-2 rounded-lg"
       />
 
-<Button type={"primary"}>Добавить</Button>
-
+      <Button type={"primary"}>Add</Button>
     </>
   );
 }

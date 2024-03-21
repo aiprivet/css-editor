@@ -8,22 +8,21 @@ export default function CreateImgNodeForm({
 }) {
   return (
     <>
-      <label>Стили</label>
+      <label>Tailwnd classnames</label>
       <input
         onChange={(event) => setNodeStyles(event.target.value)}
         value={nodeStyle}
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-      <label>Ссылка на изображение</label>
+      <label>Image src</label>
       <input
         onChange={(event) => setImgSrc(event.target.value)}
         value={imgSrc}
         type="text"
         className="border border-neutral-300 p-2 rounded-lg"
       />
-          <Button type={"primary"}>Добавить</Button>
-
+      <Button type={"primary"}>Add</Button>
     </>
   );
 }
