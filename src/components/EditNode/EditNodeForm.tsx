@@ -1,21 +1,21 @@
+import { useState } from "react";
 import { useCreatePageStore, useSelectedNodeStore } from "../../store/useStore";
-import deleteChildren from "../../utils/deleteChildren";
-import editNode from "../../utils/editNode";
-import handleAddStyles from "../../utils/handleAddStyles";
 import Button from "../../ui/Button/Button";
 import Badge from "../../ui/Badge/Badge";
-import handleDeleteStyle from "../../utils/handleDeleteStyles";
-import { useEffect, useState } from "react";
-import handleChangeTextContent from "../../utils/handleChangeText";
+import deleteChildren from "../../utils/deleteChildren";
+import editNode from "../../utils/editNode";
+import addStyles from "../../utils/addStyles";
+import deleteStyle from "../../utils/deleteStyles";
+import changeTextContent from "../../utils/changeText";
 import changeAHref from "../../utils/changeAHref";
 import changeImgSrc from "../../utils/changeImgSrc";
 
 export default function EditNodeForm() {
+  const [newStyle, setNewStyle] = useState("");
+
   const page = useCreatePageStore(function (state) {
     return state.page;
   });
-
-  const [newStyle, setNewStyle] = useState("");
 
   const updatePage = useCreatePageStore(function (state) {
     return state.updatePage;
@@ -24,36 +24,30 @@ export default function EditNodeForm() {
   const selectedNode = useSelectedNodeStore(function (state) {
     return state.selectedNode;
   });
+
   const updateSelectedNodeStyles = useSelectedNodeStore(function (state) {
     return state.updateSelectedNodeStyles;
   });
+
   const updateSelectedNode = useSelectedNodeStore(function (state) {
     return state.updateSelectedNode;
   });
+
   const updateSelectedNodeTextContent = useSelectedNodeStore(function (state) {
     return state.updateSelectedNodeTextContent;
   });
+
   const updateSelectedNodeAHref = useSelectedNodeStore(function (state) {
     return state.updateSelectedNodeAHref;
   });
+
   const updateSelectedNodeImgSrc = useSelectedNodeStore(function (state) {
     return state.updateSelectedNodeImgSrc;
   });
 
   return (
     <div className=" flex flex-col gap-2 border border-neutral-200 rounded-xl p-8 z-50 bg-neutral-100 ">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          editNode(
-            page,
-            updatePage,
-            selectedNode.id,
-            selectedNode.styles,
-            selectedNode.textContent
-          );
-        }}
-      >
+      <div>
         <h2 className="text-center text-xl font-bold mb-2">
           Редактировать узел
         </h2>
@@ -64,39 +58,64 @@ export default function EditNodeForm() {
             {selectedNode.styles.map((style: string, index: number) => (
               <Badge
                 cl={style}
-                key={index}
-                onClick={() =>
-                  handleDeleteStyle(
+                key={style}
+                onClick={() => {
+                  deleteStyle(
                     index,
                     selectedNode,
                     updateSelectedNodeStyles,
-                    updateSelectedNode
-                  )
-                }
+                    updateSelectedNode,
+                    page,
+                    updatePage
+                  );
+                }}
               />
             ))}
           </div>
           <label className="text-start">Добавить стиль</label>
 
-          <input
-            onChange={(event) => {
-              setNewStyle(event.target.value);
-            }}
-            value={newStyle}
-            type="text"
-            className="border border-neutral-300 p-2 rounded-lg "
-          />
+            <form
+            className="flex h-fit w-fit gap-2 flex-row items-center" 
+              onSubmit={(event) => {
+                event.preventDefault();
+                addStyles(
+                  newStyle,
+                  setNewStyle,
+                  selectedNode,
+                  updateSelectedNodeStyles,
+                  updateSelectedNode,
+                  page,
+                  updatePage
+                );
+              }}
+            >
+              <div>
+                <input
+                  onChange={(event) => {
+                    setNewStyle(event.target.value);
+                  }}
+                  value={newStyle}
+                  type="text"
+                  className="border border-neutral-300 p-1 rounded-lg w-32"
+                />
+              </div>
+              <div>
+                <Button type="primary">Добавить</Button>
+              </div>
+            </form>
           {selectedNode.textContent ? (
             <>
               <label className="text-start">Редактировать текст</label>
 
               <input
                 onChange={(event) => {
-                  handleChangeTextContent(
+                  changeTextContent(
                     event.target.value,
                     selectedNode,
                     updateSelectedNodeTextContent,
-                    updateSelectedNode
+                    updateSelectedNode,
+                    page,
+                    updatePage
                   );
                 }}
                 type="text"
@@ -117,7 +136,9 @@ export default function EditNodeForm() {
                     event.target.value,
                     selectedNode,
                     updateSelectedNodeAHref,
-                    updateSelectedNode
+                    updateSelectedNode,
+                    page,
+                    updatePage
                   );
                 }}
                 type="text"
@@ -141,7 +162,9 @@ export default function EditNodeForm() {
                     event.target.value,
                     selectedNode,
                     updateSelectedNodeImgSrc,
-                    updateSelectedNode
+                    updateSelectedNode,
+                    page,
+                    updatePage
                   );
                 }}
                 type="text"
@@ -153,41 +176,26 @@ export default function EditNodeForm() {
             ""
           )}
 
-          <Button
-            onClick={() =>
-              handleAddStyles(
-                newStyle,
-                selectedNode,
-                updateSelectedNodeStyles,
-                updateSelectedNode
-              )
-            }
-            type={"success"}
-          >
-            Сохранить
-          </Button>
-
           <button
-            className={`text-white px-4 py-2 rounded-lg text-xs hover:bg-gradient-to-br transition ${
+            className={`mt-2 text-white px-4 py-2 rounded-lg text-xs hover:bg-gradient-to-br transition ${
               selectedNode.id === "1"
                 ? "bg-gradient-to-r from-neutral-400 via-neutral-500 to-neutral-600 "
                 : "bg-gradient-to-r from-red-400 via-red-500 to-red-600 "
             }`}
             disabled={selectedNode.id === "1" ? true : false}
-            onClick={() =>
+            onClick={() => {
               deleteChildren(
                 selectedNode.id,
-                selectedNode,
                 updateSelectedNode,
                 page,
                 updatePage
-              )
-            }
+              );
+            }}
           >
             Удалить узел
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

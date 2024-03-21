@@ -14,7 +14,7 @@ export default function Button({ type, children, onClick }: ButtonProps) {
     <button
       onClick={onClick}
       type="submit"
-      className={`mt-2 text-white px-4 py-2 rounded-lg text-xs bg-gradient-to-r ${colorTypes[type]} hover:bg-gradient-to-br transition`}
+      className={`text-white px-4 py-2 rounded-lg text-xs bg-gradient-to-r ${colorTypes[type]} hover:bg-gradient-to-br transition`}
     >
       {children}
     </button>

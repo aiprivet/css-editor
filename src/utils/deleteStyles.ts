@@ -1,23 +1,25 @@
-export default function changeAHref(
-  newAHref,
+export default function deleteStyle(
+  indexToDelete,
   selectedNode,
-  updateSelectedNodeAHref,
+  updateSelectedNodeStyles,
   updateSelectedNode,
   page,
   updatePage
 ) {
   let newNode = JSON.parse(JSON.stringify(selectedNode));
-
+  
   let newPage = JSON.parse(JSON.stringify(page));
 
-  updateSelectedNodeAHref(newAHref);
+  let updatedStyles = newNode.styles.filter((_, i) => i !== indexToDelete);
 
-  updateSelectedNode({ ...newNode, aHref: newAHref });
+  updateSelectedNodeStyles(updatedStyles);
+
+  updateSelectedNode({ ...newNode, styles: updatedStyles });
 
   function findNode(page) {
     for (let node of page) {
       if (node.id === selectedNode.id) {
-        node.aHref = newAHref;
+        node.styles = updatedStyles;
         return;
       } else if (node.childrens?.length > 0) {
         findNode(node.childrens);
@@ -26,5 +28,6 @@ export default function changeAHref(
   }
 
   findNode(newPage);
+
   updatePage(newPage);
 }

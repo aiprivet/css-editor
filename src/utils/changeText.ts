@@ -1,7 +1,7 @@
-export default function changeAHref(
-  newAHref,
+export default function changeTextContent(
+  newTextContent,
   selectedNode,
-  updateSelectedNodeAHref,
+  updateSelectedNodeTextContent,
   updateSelectedNode,
   page,
   updatePage
@@ -10,14 +10,14 @@ export default function changeAHref(
 
   let newPage = JSON.parse(JSON.stringify(page));
 
-  updateSelectedNodeAHref(newAHref);
+  updateSelectedNodeTextContent(newTextContent);
 
-  updateSelectedNode({ ...newNode, aHref: newAHref });
+  updateSelectedNode({ ...newNode, textContent: newTextContent });
 
   function findNode(page) {
     for (let node of page) {
       if (node.id === selectedNode.id) {
-        node.aHref = newAHref;
+        node.textContent = newTextContent;
         return;
       } else if (node.childrens?.length > 0) {
         findNode(node.childrens);

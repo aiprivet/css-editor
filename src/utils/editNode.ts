@@ -3,7 +3,8 @@ export default function editNode(
   updatePage,
   idToFound: string,
   newStyles: string[],
-  newText = ""
+  newText = "",
+  setNewStyle
 ) {
   let updatedTree = JSON.parse(JSON.stringify(page));
   function editNodeById(nodes: NodeTree) {
@@ -22,4 +23,5 @@ export default function editNode(
   }
   editNodeById(updatedTree);
   updatePage(updatedTree);
+  setNewStyle("");
 }

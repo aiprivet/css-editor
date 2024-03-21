@@ -1,11 +1,10 @@
 export default function deleteChildren(
   idToFound: string,
-  selectedNode,
   updateSelectedNode,
   page,
   updatePage
 ) {
-  if (selectedNode.id === "1") return;
+  if (idToFound === "1") return;
 
   let updatedTree = JSON.parse(JSON.stringify(page));
 
@@ -33,7 +32,6 @@ export default function deleteChildren(
       }
     }
   }
-
   deleteChildrenById(updatedTree, idToFound);
   const initNode = updatedTree[0];
   updateSelectedNode(initNode);
